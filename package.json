@@ -15,7 +15,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "build": "./node_modules/.bin/webpack --config webpack.config.js",
+    "build": "babel src --out-dir lib",
+    "prepublish": "npm run clean && npm run build",
     "deploy": "./node_modules/.bin/gh-pages -d dist",
     "playground": "node devServer.js --env playground",
     "start": "node server.js",
