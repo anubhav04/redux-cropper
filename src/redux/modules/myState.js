@@ -1,7 +1,9 @@
 import { createAction, handleActions } from 'redux-actions';
 import R from 'ramda'
+import Immutable from 'immutable'
 
-const initialState = {
+const initialState = Immutable.fromJS({
+	isInited: false,
 	isLoaded: false,
 	isCompleted: false,
 	isRotated: false,
@@ -14,16 +16,12 @@ const initialState = {
 	crossOrigin: '',
 	canvas: null,
 	cropBox: null
-};
-
-const updateOption = (state, name, value)=> {
-	let newValue = value;
-
-	return state.set(name, newValue);
-};
+});
 
 export default handleActions({
-		NEW_MY_STATE: (state, payload) => R.reduce((oldState, {name, value})=>updateOption(oldState, name, value))(state, payload)
+		NEW_MY_STATE: (state, {payload}) => R.reduce((oldState, [name, value])=>{
+			return oldState.set(name, value)
+		})(state, R.toPairs(payload))
 	},
 	initialState
 )

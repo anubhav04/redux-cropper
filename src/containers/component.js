@@ -7,11 +7,15 @@ export default (options)=>{
 	const store = create(options);
 
 	class Cropper extends Component {
+		componentDidMount(){
+			if(this.props.onRedux) {
+				this.props.onRedux(store)
+			}
+		}
+
 		render() {
 			return (
-				<div>
 					<ConnectedAll options={this.props} store={store}/>
-				</div>
 			);
 		}
 	}

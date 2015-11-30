@@ -50,4 +50,6 @@ export const init = () =>
 		dispatch(initContainer(size));
 		dispatch(initCanvas());
 		dispatch(initCropBox());
+
+		dispatch(createAction('NEW_MY_STATE')({isInited: true}));
 	};

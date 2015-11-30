@@ -2,7 +2,6 @@
   "name": "redux-cropper-example",
   "description": "My supreme module",
   "license": "MIT",
-  "repository": "lapanoid/lapanoid-react-cropper",
   "author": {
     "name": "Sergey Lapin",
     "email": "lapanoid@gmail.com",

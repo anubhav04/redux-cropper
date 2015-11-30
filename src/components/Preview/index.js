@@ -1,6 +1,8 @@
 import React from 'react';
 import PureComponent from 'react-pure-render/component';
 import {getTransform} from  '../../utilities';
+import {pointFromSize} from  '../../records/point';
+import Immutable from  'immutable';
 import Preview from  './Preview';
 
 // if (options.responsive) {
@@ -11,43 +13,40 @@ export default class SimplePreview extends PureComponent {
 	render() {
 		const {
 			divSize,
-			image: {
-				size: imageSize,
-				rotate,
-				scale
-				},
+			image,
 			url,
-			cropBox: {
-				size: cropBoxSize,
-				offset: cropBoxOffset
-				}
+			cropBox
 			} = this.props;
 
-		let newDivSize = divSize;
+		if(!image || !cropBox){
+			return <div/>
+		}
+
+		let newDivSize = Immutable.Iterable.isIterable(divSize) ? divSize : pointFromSize(divSize);
 		let ratio = 1;
 
-		if (cropBoxSize.get('x')) {
-			ratio = divSize.get('x') / cropBoxSize.get('x');
-			newDivSize = newDivSize.set('y', cropBoxSize.get('y') * ratio)
+		if (cropBox.getIn(['size', 'x'])) {
+			ratio = newDivSize.get('x') / cropBox.getIn(['size', 'x']);
+			newDivSize = newDivSize.set('y', cropBox.getIn(['size', 'y']) * ratio)
 		}
 
-		if (cropBoxSize.get('y') && newHeight > divSize.get('y')) {
-			ratio = divSize.get('y') / cropBoxSize.get('y');
+		if (cropBox.getIn(['size', 'y']) && image.getIn(['naturalSize', 'y']) > newDivSize.get('y')) {
+			ratio = newDivSize.get('y') / cropBox.getIn(['size', 'y']);
 
 			newDivSize = newDivSize
-				.set('x', cropBoxSize.get('x') * ratio)
-				.set('y', divSize.get('y'))
+				.set('x', cropBox.getIn(['size', 'x']) * ratio)
+				.set('y', newDivSize.get('y'))
 		}
 
-		const newCropBoxOffset = cropBoxOffset.negate().scaleScalar(ratio);
+		const newCropBoxOffset = cropBox.get('offset').negate().scaleScalar(ratio);
 
 		const newProps = {
 			divStyle: newDivSize.getSize(),
 			imgStyle: {
-				...imageSize.scaleScalar(ratio).getSize(),
+				...image.get('size').scaleScalar(ratio).getSize(),
 				marginLeft: newCropBoxOffset.get('x'),
-				marginTop: newCropBoxOffset.get(''),
-				transform: getTransform({rotate, scale: scale.toJS()})
+				marginTop: newCropBoxOffset.get('y'),
+				transform: getTransform({rotate:image.get('rotate'), scale: image.get('scale').toJS()})
 			},
 			url
 		};

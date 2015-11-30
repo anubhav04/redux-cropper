@@ -69,7 +69,7 @@ export const wheel = R.compose(zoomableAC, enabledAC)
 	}
 );
 
-export const clickSubmit = () =>
+export const getBlob = (cb) =>
 	(dispatch, getState)=> {
 		const {options:_options, image, canvas, cropBox} = getState();
 		const options = _options.get('options');
@@ -81,6 +81,6 @@ export const clickSubmit = () =>
 			},
 			isRounded:false
 		}).then((img)=>{
-				dispatch(createAction('SET_CROPPED_IMG')(img))
-			});
+			cb(img)
+		});
 	};

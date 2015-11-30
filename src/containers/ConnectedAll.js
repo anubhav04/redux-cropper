@@ -50,8 +50,7 @@ class ConnectedAll extends Component {
 			wheel,
 			cropStart,
 			cropMove,
-			cropEnd,
-			clickSubmit
+			cropEnd
 		} = this.props;
 
 		const actionDirections = {
@@ -120,9 +119,7 @@ class ConnectedAll extends Component {
 			return <div/>;
 		}
 
-		setTimeout(()=>clickSubmit(), 100);
-
-		return (<div>
+		return (
 				<ImageContainer
 					handlers={handlers}
 					cropperActions={cropperActions}
@@ -130,11 +127,7 @@ class ConnectedAll extends Component {
 					style={{}}
 					container={container}
 					actionDirections={actionDirections}/>
-				<button onClick={clickSubmit}>
-					clickSubmit
-				</button>
-				<img src={this.props.testImg}/>
-			</div>);
+		);
 	}
 }
 

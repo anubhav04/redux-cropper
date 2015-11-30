@@ -7,21 +7,31 @@ import { pointFromSize } from '../../records/point';
 const NEW_OPTIONS = 'NEW_OPTIONS';
 
 export const newOptions = (obj)=> {
+	const {onRedux, ...rest} = obj;
+	console.log('!')
 	return (dispatch, getState)=> {
 		const {options} = getState();
 		const lastPassedOptions = options.get('lastPassedOptions');
-		const newOptions = Immutable.fromJS(obj);
-		if (Immutable.is(lastPassedOptions, newOptions)) {
+
+		if(!lastPassedOptions){
+			dispatch(newOptionsNoCheck(obj))
 			return;
 		}
-
+		const newOptions = Immutable.fromJS(rest);
+		//console.log(JSON.stringify(lastPassedOptions.toJS()))
+		//console.log(JSON.stringify(newOptions.toJS()))
+		// TODO
+		// Immutable.is(lastPassedOptions, newOptions) - don't work here =(
+		if (JSON.stringify(lastPassedOptions.toJS()) === JSON.stringify(newOptions.toJS())) {
+			return;
+		}
 		dispatch(newOptionsNoCheck(obj))
 	}
 };
 
 export const newOptionsNoCheck = (obj)=> {
 	return (dispatch)=> {
-		dispatch(createAction(NEW_OPTIONS)(obj))
+		dispatch(createAction(NEW_OPTIONS)(obj));
 		dispatch(init())
 	}
 };

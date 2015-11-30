@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PureComponent from 'react-pure-render/component';
 
-import CropperFct from 'redux-cropper';
+import { getBlob, CropperFct, CropperPreview } from 'redux-cropper';
 const Cropper = CropperFct({isDebug:true});
 
 const options = {
@@ -22,10 +23,42 @@ const options = {
 	url: 'http://fengyuanchen.github.io/cropper/img/picture.jpg'
 };
 
-export default class App extends Component {
+export default class App extends PureComponent {
+	constructor(props, context) {
+		super(props, context);
+		this.state = {};
+		this.onCropperReduxUpdate = this.onCropperReduxUpdate.bind(this);
+	}
+
+	onCropperReduxUpdate(){
+		const {image, cropBox, myState} = this.state.cropperRedux.getState();
+		if(!myState.get('isInited')){
+			return;
+		}
+		this.setState({image, cropBox});
+
+		//this.state.cropperRedux.dispatch(getBlob((blob)=>this.setState({
+		//	testImg: blob
+		//})));
+	}
+
 	render() {
 		return (
-			<Cropper {...options}/>
+			<div>
+				<Cropper {...options} onRedux={(cropperRedux)=>{
+					this.setState({cropperRedux});
+					cropperRedux.subscribe(this.onCropperReduxUpdate)
+				}}/>
+				<CropperPreview url={options.url}
+												divSize={{width:100, height:70}}
+												image={this.state.image}
+												cropBox={this.state.cropBox}/>
+
+				<CropperPreview url={options.url}
+												divSize={{width:200, height:140}}
+												image={this.state.image}
+												cropBox={this.state.cropBox}/>
+			</div>
 		);
 	}
 }
