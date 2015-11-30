@@ -29,4 +29,4 @@
 //
 //if (this.isCompleted) {
 //	this.trigger(EVENT_CROP, this.getData());
-}
+//}
