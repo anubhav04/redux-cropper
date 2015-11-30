@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { createStore, compose, applyMiddleware } from 'redux';
-import { devTools, persistState } from 'redux-devtools';
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
 import { batchedUpdatesMiddleware } from 'redux-batched-updates';
-import { Provider } from 'react-redux';
 import reducer from './modules/reducer';
 import init from './init';
 import createLogger from 'redux-logger';
@@ -25,16 +22,20 @@ const loggerMiddleware = createLogger({
 	}
 });
 
-export default ()=> {
+export default ({isDebug})=> {
+	const middlewares = [promiseMiddleware, thunkMiddleware];
+
+	if(isDebug) {
+		middlewares.push(loggerMiddleware)
+	}
+
 	const finalCreateStore = compose(
-		applyMiddleware(promiseMiddleware, thunkMiddleware, loggerMiddleware),
-		devTools(),
-		persistState(window.location.href.match(/[?&]debug_session=([^&]+)\b/))
+		applyMiddleware.apply(null, middlewares)
 	)(createStore);
 
 	const store = finalCreateStore(reducer);
 
-	if (module.hot) {
+	if (isDebug || module.hot) {
 		module.hot.accept('./modules/reducer', () =>
 			store.replaceReducer(require('./modules/reducer'))
 		);

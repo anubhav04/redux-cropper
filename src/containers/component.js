@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 
-import { DevTools, DebugPanel, LogMonitor } from 'redux-devtools/lib/react';
-import { Provider } from 'react-redux';
 import create from '../redux/create';
 import ConnectedAll from './ConnectedAll';
 
-const store = create();
+export default (options)=>{
+	const store = create(options);
 
-export default class App extends Component {
-	render() {
-		return (
-				<ConnectedAll options={this.props} store={store}/>
-		);
+	class Cropper extends Component {
+		render() {
+			return (
+				<div>
+					<ConnectedAll options={this.props} store={store}/>
+				</div>
+			);
+		}
 	}
+	return Cropper;
 }
 
 //<DebugPanel top right bottom>

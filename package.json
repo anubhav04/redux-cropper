@@ -93,7 +93,6 @@
     "redbox-react": "^1.2.0",
     "redux-devtools": "2.1.5",
     "rimraf": "^2.4.4",
-    "sass-loader": "2.0.0",
     "semantic-release": "^4.3.5",
     "source-map-support": "0.3.2",
     "strip-loader": "0.1.0",

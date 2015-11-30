@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import Cropper from 'redux-cropper';
+import CropperFct from 'redux-cropper';
+const Cropper = CropperFct({isDebug:false});
 
-console.log('!!!')
 const options = {
 	viewMode: 1,
 	wheelZoomRatio: 0.5,
