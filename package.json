@@ -2,7 +2,10 @@
   "name": "redux-cropper",
   "description": "My supreme module",
   "license": "MIT",
-  "repository": "lapanoid/redux-cropper",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lapanoid/redux-cropper.git"
+  },
   "author": {
     "name": "Sergey Lapin",
     "email": "lapanoid@gmail.com",
@@ -16,7 +19,8 @@
     "deploy": "./node_modules/.bin/gh-pages -d dist",
     "playground": "node devServer.js --env playground",
     "start": "node server.js",
-    "test": "echo no tests"
+    "test": "echo no tests",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "files": [
     "index.js",
@@ -93,7 +97,8 @@
     "webpack-dev-middleware": "^1.2.0",
     "webpack-dev-server": "1.11.0",
     "webpack-hot-middleware": "^2.5.0",
-    "yargs": "^3.29.0"
+    "yargs": "^3.29.0",
+    "semantic-release": "^4.3.5"
   },
   "config": {
     "commitizen": {
