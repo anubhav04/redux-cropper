@@ -7,8 +7,6 @@ import { pointFromSize, pointFromOffset } from '../../records/point';
 export default handleActions(
 	{
 		INIT_CONTAINER: (state, {payload:{size, minSize}})=>{
-			console.log(size);
-			console.log(minSize);
 			return state.set('size', size.max(minSize))
 		}
 	},

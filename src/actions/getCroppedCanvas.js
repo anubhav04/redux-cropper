@@ -112,8 +112,6 @@ const getDrawImageParams = (params)=> {
 		dstSize = dstSize.set('y', _height);
 	}
 
-	console.log(srcPoint.toJS())
-
 	args = [
 		...args,
 		srcPoint.get('x'),
@@ -127,8 +125,6 @@ const getDrawImageParams = (params)=> {
 		dstPoint = dstPoint.scaleScalar(scaledRatio);
 		dstSize = dstSize.scaleScalar(scaledRatio);
 	}
-
-	console.log(dstSize.toJS())
 
 	// Avoid "IndexSizeError" in IE and Firefox
 	if (dstSize.get('x') > 0 && dstSize.get('y') > 0) {
@@ -148,9 +144,7 @@ export const getOffscreenCroppedImagePromise = (obj)=>
 	new Promise((resolve, reject)=>{
 		try {
 			var downloadingImage = new Image();
-			console.log('!!!')
 			downloadingImage.onload = function(){
-				console.log('@@@@')
 				const imageElem = document.createElement("img");
 				imageElem.src = this.src;
 
