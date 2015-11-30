@@ -28,8 +28,7 @@
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "files": [
-    "index.js",
-    "cli.js"
+    "lib"
   ],
   "keywords": [
     "cli-app",
@@ -54,10 +53,10 @@
     "redux-logger": "2.0.4",
     "redux-promise": "0.5.0",
     "redux-thunk": "0.1.0",
-    "reselect": "2.0.0",
-    "sass-loader": "^3.1.1"
+    "reselect": "2.0.0"
   },
   "devDependencies": {
+    "sass-loader": "^3.1.1",
     "autoprefixer-loader": "^3.1.0",
     "node-sass": "^3.4.2",
     "babel": "^5.5.8",
