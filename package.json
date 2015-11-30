@@ -2,6 +2,7 @@
   "name": "redux-cropper",
   "description": "My supreme module",
   "license": "MIT",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/lapanoid/redux-cropper.git"
@@ -57,6 +58,7 @@
     "sass-loader": "^3.1.1"
   },
   "devDependencies": {
+    "babel": "^5.5.8",
     "autoprefixer-loader": "^3.1.0",
     "babel-core": "^5.8.34",
     "babel-eslint": "^4.1.5",
