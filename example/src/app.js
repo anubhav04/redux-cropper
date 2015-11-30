@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import CropperFct from 'redux-cropper';
-const Cropper = CropperFct({isDebug:false});
+const Cropper = CropperFct({isDebug:true});
 
 const options = {
 	viewMode: 1,
