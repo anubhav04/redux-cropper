@@ -10,11 +10,7 @@ const store = create();
 export default class App extends Component {
 	render() {
 		return (
-			<div>
-				<Provider store={store}>
-					{() => <ConnectedAll options={this.props}/> }
-				</Provider>
-			</div>
+				<ConnectedAll options={this.props} store={store}/>
 		);
 	}
 }
