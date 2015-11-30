@@ -1,5 +1,5 @@
 {
-  "name": "lapanoid-react-cropper",
+  "name": "redux-cropper-example",
   "description": "My supreme module",
   "license": "MIT",
   "repository": "lapanoid/lapanoid-react-cropper",
@@ -14,9 +14,6 @@
   "scripts": {
     "build": "./node_modules/.bin/webpack --config webpack.config.js",
     "deploy": "./node_modules/.bin/gh-pages -d dist",
-    "playground": "node devServer.js --env playground",
-    "start": "node server.js",
-    "test": "mocha"
   },
   "files": [
     "index.js",
