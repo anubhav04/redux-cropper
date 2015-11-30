@@ -1,0 +1,10 @@
+@import "../../styles/mixins.scss";
+@import "../../styles/variables.scss";
+
+.cropper-view-box {
+  display: block;
+  overflow: hidden;
+  outline: 1px solid $color-brand;
+  outline-color: rgba($color-brand, .75);
+  @include square(100%);
+}

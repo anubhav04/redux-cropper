@@ -1,0 +1,28 @@
+@import "../../styles/mixins.scss";
+@import "../../styles/share.scss";
+
+.cropper-container {
+  position: relative;
+  font-size: 0;
+  line-height: 0;
+  direction: ltr !important; // Ignore global rtl
+  touch-action: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+
+  img {
+	// Avoid margin top issue (Occur only when margin-top <= -height)
+	display: block;
+
+	// https://developer.mozilla.org/en-US/docs/Web/CSS/image-orientation
+	image-orientation: 0 !important;
+
+	min-width: 0 !important;
+	min-height: 0 !important;
+	max-width: none !important;
+	max-height: none !important;
+	@include square(100%);
+  }
+}
+

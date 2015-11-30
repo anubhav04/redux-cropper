@@ -1,0 +1,13 @@
+@import "../../styles/mixins.scss";
+@import "../../styles/share.scss";
+@import "../../styles/utilities.scss";
+
+.cropper-drag-box {
+  background-color: #fff;
+  @include opacity(0);
+}
+
+.cropper-modal {
+  background-color: #000;
+  @include opacity(.5);
+}
