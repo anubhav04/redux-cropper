@@ -15,6 +15,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
+    "clean": "rimraf lib dist coverage",
     "build": "babel src --out-dir lib",
     "prepublish": "npm run clean && npm run build",
     "deploy": "./node_modules/.bin/gh-pages -d dist",
@@ -88,7 +89,9 @@
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.2.0",
     "redux-devtools": "2.1.5",
+    "rimraf": "^2.4.4",
     "sass-loader": "2.0.0",
+    "semantic-release": "^4.3.5",
     "source-map-support": "0.3.2",
     "strip-loader": "0.1.0",
     "style-loader": "^0.13.0",
@@ -98,8 +101,7 @@
     "webpack-dev-middleware": "^1.2.0",
     "webpack-dev-server": "1.11.0",
     "webpack-hot-middleware": "^2.5.0",
-    "yargs": "^3.29.0",
-    "semantic-release": "^4.3.5"
+    "yargs": "^3.29.0"
   },
   "config": {
     "commitizen": {
