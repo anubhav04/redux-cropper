@@ -25,3 +25,7 @@ You also should use these webpack loaders as redux-cropper use css-modules inter
 	loader: 'style!css!sass'
 }
 ```
+
+##Thanks!
+@fengyuanchen for his awesome jQuery plugin
+
