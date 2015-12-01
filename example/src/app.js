@@ -2,8 +2,8 @@ import React from 'react';
 import PureComponent from 'react-pure-render/component';
 
 import { getBlob, CropperFct, CropperPreview } from 'redux-cropper';
-const Cropper = CropperFct({isDebug:true});
- 
+const Cropper = CropperFct({isDebug: true});
+
 const options = {
 	viewMode: 1,
 	wheelZoomRatio: 0.5,
@@ -25,18 +25,18 @@ const options = {
 export default class App extends PureComponent {
 	constructor(props, context) {
 		super(props, context);
-		this.state = {rotate : 0};
+		this.state = {rotate: 0};
 		this.onCropperReduxUpdate = this.onCropperReduxUpdate.bind(this);
 	}
 
-	onCropperReduxUpdate(){
+	onCropperReduxUpdate() {
 		const {image, cropBox, myState} = this.state.cropperRedux.getState();
-		if(!myState.get('isInited')){
+		if (!myState.get('isInited')) {
 			return;
 		}
 		this.setState({image, cropBox});
 
-		if(this.state.blob){
+		if (this.state.blob) {
 			this.state.cropperRedux.dispatch(getBlob((blob)=>this.setState({
 				testImg: blob
 			})));
@@ -54,7 +54,7 @@ export default class App extends PureComponent {
 						this.setState({blob:!this.state.blob})
 					}}
 					/>
-					{this.state.blob ?'Get and set blob to img on each change (slow) and only works correct on angle % 90 === 0 for now' : 'Get cropper data and set previews (fast)'}
+					{this.state.blob ? 'Get and set blob to img on each change (slow) and only works correct on angle % 90 === 0 for now' : 'Get cropper data and set previews (fast)'}
 					<br/>
 					<input type="range"
 								 min="0"
@@ -78,14 +78,14 @@ export default class App extends PureComponent {
 							this.setState({cropperRedux});
 							cropperRedux.subscribe(this.onCropperReduxUpdate)
 						}}/>
-					</div>
+				</div>
 				{this.state.blob ? (
-					<div  style={{display:'inline-block'}}>
+					<div style={{display:'inline-block'}}>
 						<br/>
 						<img src={this.state.testImg}/>
 					</div>
-				): (
-					<div  style={{display:'inline-block'}}>
+				) : (
+					<div style={{display:'inline-block'}}>
 						<br/>
 						<CropperPreview url={options.url}
 														divSize={{width:100, height:70}}
