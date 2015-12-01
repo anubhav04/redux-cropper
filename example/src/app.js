@@ -3,7 +3,7 @@ import PureComponent from 'react-pure-render/component';
 
 import { getBlob, CropperFct, CropperPreview } from 'redux-cropper';
 const Cropper = CropperFct({isDebug:true});
-
+ 
 const options = {
 	viewMode: 1,
 	wheelZoomRatio: 0.5,
