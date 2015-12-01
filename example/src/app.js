@@ -17,7 +17,7 @@ const options = {
 	cropBoxResizable: true,
 	size: {
 		width: 500,
-		height: 500
+		height: 300
 	},
 	url: 'http://fengyuanchen.github.io/cropper/img/picture.jpg'
 };
