@@ -2,7 +2,7 @@ import React from 'react';
 import PureComponent from 'react-pure-render/component';
 
 import CSSModules from "react-css-modules";
-import styles from  './styles.scss';
+import styles from  './styles.module.scss';
 import WrapBox from '../WrapBox'
 import CropBox from '../CropBox'
 import DragBox from '../DragBox'

@@ -43,7 +43,10 @@ export const initCropBox = () =>
 
 export const init = () =>
 	(dispatch, getState)=> {
-		const {options} = getState();
+		const {options, myState} = getState();
+		//if(myState.get('isInited')){
+		//	return;
+		//}
 		const size = pointFromSize(options.get('options').get('size'));
 
 		dispatch(initImage({naturalSize: size, size}));

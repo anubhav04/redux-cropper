@@ -3,7 +3,7 @@ import PureComponent from 'react-pure-render/component';
 
 
 import {getTransform} from '../../utilities';
-import styles from  './styles.scss';
+import styles from  './styles.module.scss';
 import Preview from  '../Preview/Preview';
 
 export default class ViewBox extends PureComponent {

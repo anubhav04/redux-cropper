@@ -14,7 +14,7 @@ import {
 	ACTION_SOUTH_EAST
 } from '../../constants/direction';
 import CSSModules from "react-css-modules";
-import styles from  './styles.scss';
+import styles from  './styles.module.scss';
 
 class CropBox extends PureComponent {
 	constructor(props, context) {

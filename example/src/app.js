@@ -19,14 +19,13 @@ const options = {
 		width: 500,
 		height: 500
 	},
-	rotate: 90,
 	url: 'http://fengyuanchen.github.io/cropper/img/picture.jpg'
 };
 
 export default class App extends PureComponent {
 	constructor(props, context) {
 		super(props, context);
-		this.state = {};
+		this.state = {rotate : 0};
 		this.onCropperReduxUpdate = this.onCropperReduxUpdate.bind(this);
 	}
 
@@ -37,27 +36,72 @@ export default class App extends PureComponent {
 		}
 		this.setState({image, cropBox});
 
-		//this.state.cropperRedux.dispatch(getBlob((blob)=>this.setState({
-		//	testImg: blob
-		//})));
+		if(this.state.blob){
+			this.state.cropperRedux.dispatch(getBlob((blob)=>this.setState({
+				testImg: blob
+			})));
+		}
 	}
 
 	render() {
 		return (
 			<div>
-				<Cropper {...options} onRedux={(cropperRedux)=>{
-					this.setState({cropperRedux});
-					cropperRedux.subscribe(this.onCropperReduxUpdate)
-				}}/>
-				<CropperPreview url={options.url}
-												divSize={{width:100, height:70}}
-												image={this.state.image}
-												cropBox={this.state.cropBox}/>
+				<div style={{width:800, height:30}}>
+					<input
+						type="checkbox"
+						checked={this.state.blob}
+						onChange={()=>{
+						this.setState({blob:!this.state.blob})
+					}}
+					/>
+					{this.state.blob ?'Get and set blob to img on each change (slow)' : 'Get cropper data and set previews (fast)'}
+					<br/>
+					<input type="range"
+								 min="0"
+								 max="360"
+								 style={{width:800, height:30}}
+								 value={this.state.range}
+								 step="1"
+								 onChange={(event)=>{
+						this.setState({rotate:parseInt(event.target.value)})
+					}}/>
+					<br/>
+					{this.state.rotate}
 
-				<CropperPreview url={options.url}
-												divSize={{width:200, height:140}}
-												image={this.state.image}
-												cropBox={this.state.cropBox}/>
+				</div>
+				<br/>
+				<br/>
+				<br/>
+				<Cropper {...options}
+					rotate={this.state.rotate}
+					onRedux={(cropperRedux)=>{
+						this.setState({cropperRedux});
+						cropperRedux.subscribe(this.onCropperReduxUpdate)
+					}}/>
+
+
+				{this.state.blob ? (
+					<div>
+
+						<br/>
+						<img src={this.state.testImg}/>
+					</div>
+				): (
+					<div>
+
+						<br/>
+						<CropperPreview url={options.url}
+														divSize={{width:100, height:70}}
+														image={this.state.image}
+														cropBox={this.state.cropBox}/>
+
+						<CropperPreview url={options.url}
+														divSize={{width:200, height:140}}
+														image={this.state.image}
+														cropBox={this.state.cropBox}/>
+					</div>
+				)}
+
 			</div>
 		);
 	}

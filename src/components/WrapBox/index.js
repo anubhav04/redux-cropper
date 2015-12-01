@@ -2,7 +2,7 @@ import React from 'react';
 import PureComponent from 'react-pure-render/component';
 import {getTransform} from '../../utilities';
 import CSSModules from "react-css-modules";
-import styles from  './styles.scss';
+import styles from  './styles.module.scss';
 
 class WrapBox extends PureComponent {
 	render() {
