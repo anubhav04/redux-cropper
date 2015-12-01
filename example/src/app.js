@@ -71,24 +71,21 @@ export default class App extends PureComponent {
 				</div>
 				<br/>
 				<br/>
-				<br/>
-				<Cropper {...options}
-					rotate={this.state.rotate}
-					onRedux={(cropperRedux)=>{
-						this.setState({cropperRedux});
-						cropperRedux.subscribe(this.onCropperReduxUpdate)
-					}}/>
-
-
+				<div style={{display:'inline-block'}}>
+					<Cropper {...options}
+						rotate={this.state.rotate}
+						onRedux={(cropperRedux)=>{
+							this.setState({cropperRedux});
+							cropperRedux.subscribe(this.onCropperReduxUpdate)
+						}}/>
+					</div>
 				{this.state.blob ? (
-					<div>
-
+					<div  style={{display:'inline-block'}}>
 						<br/>
 						<img src={this.state.testImg}/>
 					</div>
 				): (
-					<div>
-
+					<div  style={{display:'inline-block'}}>
 						<br/>
 						<CropperPreview url={options.url}
 														divSize={{width:100, height:70}}
