@@ -54,7 +54,7 @@ export default class App extends PureComponent {
 						this.setState({blob:!this.state.blob})
 					}}
 					/>
-					{this.state.blob ?'Get and set blob to img on each change (slow)' : 'Get cropper data and set previews (fast)'}
+					{this.state.blob ?'Get and set blob to img on each change (slow) and only works correct on angle % 90 === 0 for now' : 'Get cropper data and set previews (fast)'}
 					<br/>
 					<input type="range"
 								 min="0"
