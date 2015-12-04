@@ -31,9 +31,9 @@
     "lib"
   ],
   "keywords": [
-    "cli-app",
-    "cli",
-    ""
+    "react-component",
+    "redux",
+    "cropper"
   ],
   "peerDependencies": {
     "react": "^0.13.3"
