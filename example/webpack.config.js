@@ -11,7 +11,7 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, 'dist'),
 		filename: 'bundle.js',
-		publicPath: '/static/'
+		publicPath: '/'
 	},
 	plugins: [
 		new webpack.HotModuleReplacementPlugin()
@@ -33,7 +33,11 @@ module.exports = {
 			{
 				test: /^((?!\.module).)*scss$/,
 				loader: 'style!css!sass'
-			}
+			},
+			{
+		      test: /\.(png|jpg)$/,
+		      loader: 'url'
+		    }
 		]
 	}
 };

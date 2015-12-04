@@ -45,6 +45,7 @@
     "eslint-plugin-react": "^3.8.0",
     "mocha": "2.2.5",
     "redux-cropper": "latest",
+    "url-loader": "^0.5.7",
     "webpack": "^1.12.4",
     "webpack-dev-middleware": "^1.2.0",
     "webpack-dev-server": "1.11.0",

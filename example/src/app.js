@@ -1,6 +1,8 @@
 import React from 'react';
 import PureComponent from 'react-pure-render/component';
 
+const imgPath = require("../img/watson.jpg");
+
 import { getBlob, CropperFct, CropperPreview } from 'redux-cropper';
 const Cropper = CropperFct({isDebug: true});
 
@@ -19,7 +21,7 @@ const options = {
 		width: 500,
 		height: 300
 	},
-	url: 'http://fengyuanchen.github.io/cropper/img/picture.jpg'
+	url: imgPath
 };
 
 export default class App extends PureComponent {

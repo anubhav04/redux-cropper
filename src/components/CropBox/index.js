@@ -2,7 +2,6 @@ import React from 'react';
 import PureComponent from 'react-pure-render/component';
 import ViewBox from '../ViewBox'
 import CropperFace from '../CropperFace'
-import perf from 'react-perf-component'
 import {
 	ACTION_SOUTH,
 	ACTION_EAST,
