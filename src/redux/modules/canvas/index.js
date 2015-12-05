@@ -75,7 +75,7 @@ const setCanvasData = (state, {left, top, width, height})=> {
 const rotateTo = (image, degree) => image.update('rotate', ()=> Number(degree) % 360);
 const rotate = (image, degree) => rotateTo(image, (image.get('rotate') || 0) + Number(degree));
 
-const init = (options, image, cropBox, container)=> {
+export const init = (state, {payload:{options, image, cropBox, container}})=> {
 	const viewMode = options.getIn(['options', 'viewMode']);
 
 	let newCanvas = Immutable.fromJS({
@@ -123,7 +123,7 @@ const init = (options, image, cropBox, container)=> {
 };
 
 export default handleActions({
-		INIT_CANVAS: (state, {payload:{options, image, cropBox, container}}) => init(options, image, cropBox, container),
+		INIT_CANVAS: init,
 		SET_CANVAS_DATA: (state, {payload}) => setCanvasData(state, payload),
 		SET_CANVAS_RAW: (state, {payload}) => payload,
 		ACTION_ZOOM: (state, {payload:ratio}) => zoom(state, ratio),

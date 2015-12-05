@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { createStore, compose, applyMiddleware } from 'redux';
 import { batchedUpdatesMiddleware } from 'redux-batched-updates';
 import reducer from './modules/reducer';
+import ignoreIfSame from './middleware/ignoreIfSame';
 import init from './init';
 import createLogger from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
@@ -43,7 +44,7 @@ const loggerMiddleware = createLogger({
 });
 
 export default ({isDebug})=> {
-	const middlewares = [promiseMiddleware, thunkMiddleware];
+	const middlewares = [promiseMiddleware, thunkMiddleware, ignoreIfSame];
 
 	if(isDebug) {
 		middlewares.push(loggerMiddleware)

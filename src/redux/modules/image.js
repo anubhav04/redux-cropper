@@ -32,20 +32,15 @@ const scale = (state, scaleX, scaleY) =>{
 	return newState;
 }
 
-export default handleActions({
-		SET_STATE_IMAGE: (state, {payload:{
-			  aspectRatio,
-				rotate,
-				naturalSize,
-				size
-			}
-		})=> {
-				return state
+export const init = (state, {payload:{aspectRatio, rotate, naturalSize, size}})=> state
 					.set('rotate', rotate)
 					.set('naturalSize', naturalSize)
 					.set('size', size)
 					.set('aspectRatio', aspectRatio ? aspectRatio : naturalSize.getAspectRatio())
-			},
+
+export default handleActions({
+		SET_STATE_IMAGE: init,
+		SET_ROTATE: (state, {payload}) => state.set('rotate', payload),
 		ACTION_ZOOM: (state, {payload:ratio}) => scale(state, ratio)
 	},
 	Immutable.fromJS({

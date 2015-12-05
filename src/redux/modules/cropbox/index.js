@@ -17,7 +17,7 @@ import limit from '../../../selectors/CropBox/limit';
 import { limitRecordPoint } from '../../../records/utils';
 import { pointFromSize, pointFromOffset } from '../../../records/point';
 
-const init = ({options:_options, canvas, cropBox, container}) => {
+export const init = (state, {payload:{options:_options, canvas, cropBox, container}}) => {
 	const options = _options.get('options');
 
 	const aspectRatio = options.get('aspectRatio');
@@ -126,9 +126,7 @@ export default handleActions({
 			// 0 -> NaN
 			const newAspectRatio = Math.max(0, aspectRatio) || NaN;
 		},
-		INIT_CROP_BOX: (state, {payload}) => {
-			return init(payload)
-		}
+		INIT_CROP_BOX: init
 	},
 	Immutable.fromJS({
 		size: pointFromSize({
