@@ -8,8 +8,24 @@ import thunkMiddleware from 'redux-thunk';
 import promiseMiddleware from 'redux-promise';
 import Immutable from 'immutable';
 
-const loggerMiddleware = createLogger({
-	transformer: (state) => {
+const actionToJS = (action) => {
+		const payload = action.payload
+		if(payload){
+			var newPayload = {};
+			for (var i of Object.keys(payload)) {
+				if (Immutable.Iterable.isIterable(payload[i])) {
+					newPayload[i] = payload[i].toJS();
+				} else {
+					newPayload[i] = payload[i];
+				}
+			}	
+			action.payload = newPayload;
+		}
+		
+		return action;
+	}
+
+const stateToJS = (state) => {
 		var newState = {};
 		for (var i of Object.keys(state)) {
 			if (Immutable.Iterable.isIterable(state[i])) {
@@ -20,6 +36,10 @@ const loggerMiddleware = createLogger({
 		}
 		return newState;
 	}
+
+const loggerMiddleware = createLogger({
+	transformer: stateToJS,
+	actionTransformer: actionToJS
 });
 
 export default ({isDebug})=> {
