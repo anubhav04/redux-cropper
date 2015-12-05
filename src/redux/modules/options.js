@@ -3,12 +3,13 @@ import R from 'ramda'
 import Immutable from 'immutable'
 import {init} from '../../actions/init'
 import { pointFromSize } from '../../records/point';
+import { diff } from 'deep-diff';
+import { setRotate } from './image';
 
 const NEW_OPTIONS = 'NEW_OPTIONS';
 
 export const newOptions = (obj)=> {
 	const {onRedux, ...rest} = obj;
-	console.log('!')
 	return (dispatch, getState)=> {
 		const {options} = getState();
 		const lastPassedOptions = options.get('lastPassedOptions');
@@ -22,16 +23,30 @@ export const newOptions = (obj)=> {
 		//console.log(JSON.stringify(newOptions.toJS()))
 		// TODO
 		// Immutable.is(lastPassedOptions, newOptions) - don't work here =(
-		if (JSON.stringify(lastPassedOptions.toJS()) === JSON.stringify(newOptions.toJS())) {
+
+		const {onRedux, ...lastPassedOptions$} = lastPassedOptions.toJS();
+		const newOptions$ = newOptions.toJS();
+		if (JSON.stringify(lastPassedOptions) === JSON.stringify(newOptions)) {
 			return;
 		}
-		dispatch(newOptionsNoCheck(obj))
+
+		dispatch(newOptionsNoCheck(obj, diff(lastPassedOptions$, newOptions$)))
 	}
 };
 
-export const newOptionsNoCheck = (obj)=> {
+export const newOptionsNoCheck = (obj, diff)=> {
 	return (dispatch)=> {
 		dispatch(createAction(NEW_OPTIONS)(obj));
+
+		if(diff && diff.length == 1) {
+			const [{kind, lhs, rhs, path}] = diff;
+
+			if(kind === 'E' && path[0] === "rotate") {
+				dispatch(createAction('SET_ROTATE')(rhs));
+				return;
+			}
+		}
+
 		dispatch(init())
 	}
 };
