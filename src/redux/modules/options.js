@@ -24,13 +24,11 @@ export const newOptions = (obj)=> {
 		// TODO
 		// Immutable.is(lastPassedOptions, newOptions) - don't work here =(
 
-		const {onRedux, ...lastPassedOptions$} = lastPassedOptions.toJS();
-		const newOptions$ = newOptions.toJS();
-		if (JSON.stringify(lastPassedOptions) === JSON.stringify(newOptions)) {
+		if (Immutable.is(lastPassedOptions, newOptions)) {
 			return;
 		}
-
-		dispatch(newOptionsNoCheck(obj, diff(lastPassedOptions$, newOptions$)))
+		
+		dispatch(newOptionsNoCheck(rest, diff(lastPassedOptions.toJS(), newOptions.toJS())))
 	}
 };
 
