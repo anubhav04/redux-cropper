@@ -4,6 +4,7 @@
 [![Github Issues](http://githubbadges.herokuapp.com/lapanoid/redux-cropper/issues.svg?style=flat-square)](https://github.com/lapanoid/redux-cropper/issues)
 [![Pending Pull-Requests](http://githubbadges.herokuapp.com/lapanoid/redux-cropper/pulls.svg?style=flat-square)](https://github.com/lapanoid/redux-cropper/pulls)
 [![License](http://img.shields.io/:license-mit-blue.svg?style=flat-square)](http://badges.mit-license.org)
+[![npm version](https://badge.fury.io/js/redux-cropper.svg)](https://badge.fury.io/js/redux-cropper)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 Port of [fengyuanchen cropper](https://github.com/fengyuanchen/cropper) to react, redux and immutable-js
