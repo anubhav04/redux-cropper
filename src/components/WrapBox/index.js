@@ -12,12 +12,17 @@ class WrapBox extends PureComponent {
 		const canvas = wrapBox.get('canvas');
 		const image = wrapBox.get('image');
 
+		const offset = image.get('offset').subtract(canvas.get('offset'))
+
 		return <div styleName="cropper-wrap-box">
-			<div styleName="cropper-canvas" style={{...canvas.get('size').getSize(), ...canvas.get('offset').getOffset()}}>
+			<div styleName="cropper-canvas" style={{
+				...canvas.get('size').getSize()
+				// , ...offset.getOffset()
+		}}>
 				<img styleName="cropper-canvas-img" src={url}
 						 style={{
 						 		...image.get('size').getSize(),
-						 		...image.get('offset').getOffset(),
+						 		// ...offset.getOffset(),
 						 		transform: getTransform({
 									rotate: image.get('rotate'),
 									scale: image.get('scale')

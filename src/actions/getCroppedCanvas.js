@@ -2,83 +2,84 @@ import { zero, one, pointFromSize } from '../records/point'
 import { getRotatedSizes } from '../utilities'
 import Immutable from 'immutable'
 
-const getSourceCanvas = (params) => {
-	const { imageElem, image, canvasData } = params;
-	const naturalSize  = image.get('naturalSize');
-	let canvasSize  = canvasData.get('size');
-	const rotate = image.get('rotate');
-	const scale = image.get('scale');
+export const getOffscreenCroppedImagePromise = (obj)=>
+	new Promise((resolve, reject)=>{
+		
+			const downloadingImage = new Image();
+			downloadingImage.onload = function() {
+				try {
+					resolve(getBlobFromSrc({
+						obj, 
+						src: this.src, 
+						type: "image/png", 
+						quality: 1
+					}))
+				} catch(ex){
+					reject(ex);
+				}
+			};
+			downloadingImage.src = obj.options.get('url');
+		
+	});
 
-	const scalable = scale.get('x') &&
-		scale.get('y') &&
-		(scale.get('x') !== 1 || scale.get('y') !== 1);
+export const getBlobFromSrc = ({obj, src, type, quality})=>{
+	const options = obj.options;
+	const imageElem = document.createElement("img");
+	imageElem.src = src;
 
-	const rotatable = rotate && rotate !== 0;
-	const advanced = rotatable || scalable;
+	const { data, cropData, scaledRatio } = getCroppedImageCanvas({...obj, imageElem});
 
-	let translate = scalable ? canvasSize.divideScalar(2) : null;
-	let rotated;
-	if (rotatable) {
-		rotated = getRotatedSizes({
-			sizePoint: naturalSize,
-			degree: rotate,
-			aspectRatio: image.get('aspectRatio')
-		});
-
-		canvasSize = rotated;
-		translate = rotated.divideScalar(2);
-	}
+	const canvasSize = cropData.canvas.get('size');
 
 	const canvas = document.createElement('canvas');
+	canvas.width = data.getIn(['size', 'x']);
+	canvas.height = data.getIn(['size', 'y']);
+
 	const context = canvas.getContext('2d');
+	// context.fillStyle = "blue";
+ //    context.fillRect(0, 0, canvas.width, canvas.height);
 
-	canvas.width = canvasSize.get('x');
-	canvas.height = canvasSize.get('y');
-
-	let offset = zero;
-	if (advanced) {
-		offset = canvasSize.negate().divideScalar(2);
-
-		context.save();
-		context.translate(translate.get('x'), translate.get('y'));
+	if (options.get('fillColor')) {
+		context.fillStyle = options.get('fillColor');
+		context.fillRect(0, 0, canvasSize.get('x'), canvasSize.get('y'));
 	}
 
-	if (rotatable) {
-		context.rotate(rotate * Math.PI / 180);
+	const drawImageParams = getDrawImageParams({imageElem, data, cropData, scaledRatio});
+	
+	if(typeof IS_TEST === 'undefined'){
+		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D.drawImage
+		context.drawImage.apply(context,  drawImageParams)
 	}
+	
+	return canvas.toDataURL(type, quality);
+}
 
-	// Should call `scale` after rotated
-	if (scalable) {
-		context.scale(scale.get('x'), scale.get('y'));
-	}
+export const getDrawImageParams = ({ imageElem, cropData, data, scaledRatio})=> {
+	const sourceCanvas = getSourceCanvas({
+		imageElem, 
+		image: cropData.image, 
+		canvasData: cropData.canvas
+	});
 
-	context.drawImage(imageElem, offset.get('x'), offset.get('y'), canvasSize.get('x'), canvasSize.get('y'));
-
-	if (advanced) {
-		context.restore();
-	}
-
-	return canvas;
+	return [sourceCanvas, ...getDrawImageParamsParams({
+		scaledRatio,
+		srcPoint: data.get('offset'), 
+		originalSize: data.get('size'), 
+		sourceSize: pointFromSize(sourceCanvas)
+	})];
 };
 
-const getDrawImageParams = (params)=> {
-	const { imageElem, cropData, data, scaledRatio } = params;
-	const originalSize = data.get('size');
-	let srcPoint = data.get('offset');
-
-	const sourceCanvas = getSourceCanvas({imageElem, image:cropData.image, canvasData:cropData.canvas});
-	const sourceSize = pointFromSize(sourceCanvas);
-
-	let args = [sourceCanvas];
-
+export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize, scaledRatio})=>{
+	let args = [];
 	let dstPoint = zero;
 	let srcSize = zero;
 	let dstSize = zero;
 
 	if (srcPoint.get('x') <= -originalSize.get('x') ||
 		srcPoint.get('x') > sourceSize.get('x')) {
-		srcPoint = srcPoint.set('x', 0);
-	} else if (srcPoint.get('x') <= 0) {
+		// srcPoint = srcPoint.set('x', 0);
+	} 
+	if (srcPoint.get('x') <= 0) {
 		dstPoint = dstPoint.set('x', -srcPoint.get('x'));
 		srcPoint = srcPoint.set('x', 0);
 		const _width = Math.min(sourceSize.get('x'), originalSize.get('x') + srcPoint.get('x'));
@@ -96,12 +97,14 @@ const getDrawImageParams = (params)=> {
 	if (srcSize.get('x') <= 0 ||
 		srcPoint.get('y') <= -originalSize.get('y') ||
 		srcPoint.get('y') > sourceSize.get('y')) {
-		srcPoint = srcPoint.set('y', 0);
-	} else if (srcPoint.get('y') <= 0) {
+		// srcPoint = srcPoint.set('y', 0);
+	}
+	 if (srcPoint.get('y') <= 0) {
 		dstPoint = dstPoint.set('y', -srcPoint.get('y'));
 		srcPoint = srcPoint.set('y', 0);
 
-		const _width = Math.min(sourceSize.get('x'), originalSize.get('y') + srcPoint.get('y'));
+		const _width = Math.min(sourceSize.get('y'), originalSize.get('y') + srcPoint.get('y'));
+
 		srcSize = srcSize.set('y', _width);
 		dstSize = dstSize.set('y', _width);
 	} else if (srcPoint.get('y') <= sourceSize.get('y')) {
@@ -114,59 +117,106 @@ const getDrawImageParams = (params)=> {
 
 	args = [
 		...args,
-		srcPoint.get('x'),
-		srcPoint.get('y'),
-		srcSize.get('x'),
-		srcSize.get('y')
+		Math.floor(srcPoint.get('x')),
+		Math.floor(srcPoint.get('y')),
+		Math.floor(srcSize.get('x')),
+		Math.floor(srcSize.get('y'))
 	];
 
 	// Scale destination sizes
-	if (scaledRatio) {
-		dstPoint = dstPoint.scaleScalar(scaledRatio);
-		dstSize = dstSize.scaleScalar(scaledRatio);
-	}
+	// if (scaledRatio) {
+	// 	dstPoint = dstPoint.scaleScalar(scaledRatio);
+	// 	dstSize = dstSize.scaleScalar(scaledRatio);
+	// }
 
 	// Avoid "IndexSizeError" in IE and Firefox
 	if (dstSize.get('x') > 0 && dstSize.get('y') > 0) {
 		args = [
 			...args,
-			dstPoint.get('x'),
-			dstPoint.get('y'),
-			dstSize.get('x'),
-			dstSize.get('y')
+			Math.floor(dstPoint.get('x')),
+			Math.floor(dstPoint.get('y')),
+			Math.floor(dstSize.get('x')),
+			Math.floor(dstSize.get('y'))
 		]
 	}
-
 	return args;
-};
+}
 
-export const getOffscreenCroppedImagePromise = (obj)=>
-	new Promise((resolve, reject)=>{
-		try {
-			var downloadingImage = new Image();
-			downloadingImage.onload = function(){
-				const imageElem = document.createElement("img");
-				imageElem.src = this.src;
+export const getSourceCanvasPure = ({ image }) => {
 
-				const canvas = getCroppedImageCanvas({...obj, imageElem});
-				var uri = canvas.toDataURL("image/png", 1);
-				resolve(uri)
-			};
-			downloadingImage.src = obj.options.get('url');
-		} catch(ex){
-			reject(ex);
-		}
+	let canvasSize  = image.get('naturalSize')
+	const rotate = image.get('rotate');
+	const scale = image.get('scale');
+
+	const scalable = scale.get('x') &&
+		scale.get('y') &&
+		(scale.get('x') !== 1 || scale.get('y') !== 1);
+
+	const rotatable = rotate && rotate !== 0;
+	const advanced = rotatable || scalable;  
+
+	let translate = scalable ? canvasSize.divideScalar(2) : null;
+	let rotated;
+	if (rotatable) { 
+		rotated = getRotatedSizes({
+			sizePoint: canvasSize,
+			degree: rotate,
+			aspectRatio: image.get('aspectRatio')
+		});
+
+		canvasSize = rotated;
+		translate = rotated.divideScalar(2);
+	}
+
+	const offset = true ? image.get('naturalSize').negate().divideScalar(2) : zero;
+	
+	return {canvasSize, translate, rotate, scale, offset, resize:image.get('naturalSize')};
+}
+
+export const getSourceCanvas = ({ imageElem, image, canvasData }) => {
+	const canvas = document.createElement('canvas');
+	const context = canvas.getContext('2d');
+
+	const {canvasSize, translate, rotate, scale, offset, resize} = getSourceCanvasPure({ 
+		imageElem, 
+		image
 	});
 
-export const getCroppedImageCanvas = (params) => {
-	const { imageElem, options, cropData, isRounded } = params;
+	canvas.width = canvasSize.get('x');
+	canvas.height = canvasSize.get('y');
 
-	const data = getData({options, cropData, isRounded});
+	// context.fillStyle = "red";
+	// context.fillRect(0 ,0, canvas.width, canvas.height);
+
+	context.save();
+	if(translate) {
+		context.translate(translate.get('x'), translate.get('y'));	
+	}
+
+	if (rotate) {
+		context.rotate(rotate * Math.PI / 180);
+	}
+
+	if (scale) {
+		context.scale(scale.get('x'), scale.get('y'));
+	}
+
+	if(typeof IS_TEST === 'undefined') {
+		context.drawImage(imageElem, offset.get('x'), offset.get('y'), resize.get('x'), resize.get('y'));
+	}
+
+    context.restore();
+    
+	return canvas;
+};
+
+export const getCroppedImageCanvas = ({ options, cropData, isRounded }) => {
+	const data = getData({ options, cropData, isRounded });
 
 	const originalSize = data.get('size');
 	const aspectRatio = originalSize.getAspectRatio();
 	let scaledSize = pointFromSize(options.get('size'));
-	let scaledRatio;
+	let scaledRatio = null;
 	if (scaledSize.get('x')) {
 		scaledSize = scaledSize.set('y', scaledSize.get('x') / aspectRatio);
 		scaledRatio = scaledSize.get('x') / originalSize.get('x');
@@ -180,45 +230,32 @@ export const getCroppedImageCanvas = (params) => {
 		height: Math.round(scaledSize.get('y') || originalSize.get('y'))
 	});
 
-	const canvas = document.createElement('canvas');
-	canvas.width = canvasSize.get('x');
-	canvas.height = canvasSize.get('y');
-	const context = canvas.getContext('2d');
-
-	if (options.get('fillColor')) {
-		context.fillStyle = options.get('fillColor');
-		context.fillRect(0, 0, canvasSize.get('x'), canvasSize.get('y'));
-	}
-
-	const drawImageParams = getDrawImageParams({imageElem, data, cropData, scaledRatio});
-
-	// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D.drawImage
-	context.drawImage.apply(context, drawImageParams);
-
-	return canvas;
+	return {data, cropData, scaledRatio}
 };
 
-const getData = (params) => {
-	const { options, cropData, isRounded } = params;
-	const { image, canvas, cropBox } = cropData;
-
+export const getData = ({ options, cropData:{image, canvas, cropBox}, isRounded }) => {
 	let data = Immutable.fromJS({
 		offset: cropBox.get('offset').subtract(canvas.get('offset')),
 		size: cropBox.get('size')
 	});
 
 	const ratio = image.getIn(['size', 'x']) / image.getIn(['naturalSize', 'x']);
-	data = data.update('offset', (point)=> {
+
+	const onRatio = (point)=> {
 		const newPoint = point.divideScalar(ratio);
 		return isRounded ? newPoint.updateCoordsOnTransform(Math.round) : newPoint;
-	});
+	}
+
+	data = data
+	.update('offset', onRatio)
+	.update('size', onRatio);
 
 	if (options.get('rotatable')) {
 		data = data.set('rotate', image.get('rotate') || 0)
 	}
 
 	if (options.get('scalable')) {
-		data = data.set('scaleSize', image.get('scaleSize') || one)
+		data = data.set('scale', image.get('scale') || one)
 	}
 
 	return data;

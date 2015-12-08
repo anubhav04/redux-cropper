@@ -2,9 +2,9 @@ import { createAction, handleActions } from 'redux-actions';
 import R from 'ramda'
 import Immutable from 'immutable'
 import {init} from '../../actions/init'
+import {rotate} from '../../actions/rotate'
 import { pointFromSize } from '../../records/point';
 import { diff } from 'deep-diff';
-import { setRotate } from './image';
 
 const NEW_OPTIONS = 'NEW_OPTIONS';
 
@@ -15,7 +15,7 @@ export const newOptions = (obj)=> {
 		const lastPassedOptions = options.get('lastPassedOptions');
 
 		if(!lastPassedOptions){
-			dispatch(newOptionsNoCheck(obj))
+			dispatch(newOptionsNoCheck(rest))
 			return;
 		}
 		const newOptions = Immutable.fromJS(rest);
@@ -27,7 +27,7 @@ export const newOptions = (obj)=> {
 		if (Immutable.is(lastPassedOptions, newOptions)) {
 			return;
 		}
-		
+
 		dispatch(newOptionsNoCheck(rest, diff(lastPassedOptions.toJS(), newOptions.toJS())))
 	}
 };
@@ -40,7 +40,7 @@ export const newOptionsNoCheck = (obj, diff)=> {
 			const [{kind, lhs, rhs, path}] = diff;
 
 			if(kind === 'E' && path[0] === "rotate") {
-				dispatch(createAction('SET_ROTATE')(rhs));
+				dispatch(rotate(rhs));
 				return;
 			}
 		}

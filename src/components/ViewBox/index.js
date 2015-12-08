@@ -15,10 +15,7 @@ export default class ViewBox extends PureComponent {
 		const canvasOffset = viewBox.get('canvasOffset');
 		const image = viewBox.get('image');
 
-		const offset = cropBoxOffset
-			.subtract(canvasOffset)
-			.subtract(image.get('offset'))
-			.negate();
+		const offset = (cropBoxOffset).negate()
 
 		const newProps = {
 			styleName: styles['cropper-view-box'],

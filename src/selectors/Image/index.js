@@ -6,7 +6,7 @@ import {zero} from '../../records/point'
 const render = (canvas, image) => {
 	let newImage = image;
 
-	const reversed = false && newImage.get('rotate') ? getRotatedSizes({
+	const reversed = newImage.get('rotate') ? getRotatedSizes({
 		sizePoint: newImage.get('size'),
 		degree: newImage.get('rotate'),
 		aspectRatio: newImage.get('aspectRatio'),

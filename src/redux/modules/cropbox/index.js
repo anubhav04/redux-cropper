@@ -29,6 +29,8 @@ export const init = (state, {payload:{options:_options, canvas, cropBox, contain
 	newCropBox = newCropBox.set('minSize', zero);
 
 	return newCropBox
+	    .set('size', container.get('size'))
+		.set('offset', zero);
 
 	if (aspectRatio) {
 		newCropBox = newCropBox.normalizeByAspectRatio(aspectRatio);
@@ -55,7 +57,9 @@ export const init = (state, {payload:{options:_options, canvas, cropBox, contain
 		.set('size', limitRecordPoint('size')(newCropBox));
 
 	// The width of auto crop area must large than "minWidth", and the height too. (#164)
-	return newCropBox.update('size', (size)=>newCropBox.get('minSize').max(size.scaleScalar(autoCropArea)));
+	return newCropBox
+		.update('size', (size)=>newCropBox.get('minSize').max(size.scaleScalar(autoCropArea)))
+
 };
 
 export const actionCrop = (range, offset) =>
@@ -130,12 +134,12 @@ export default handleActions({
 	},
 	Immutable.fromJS({
 		size: pointFromSize({
-			width: 82.08888888888887,
-			height: 46.175
+			width: 0,
+			height: 0
 		}),
 		offset: pointFromOffset({
-			left: 453.9111111111111,
-			top: 144.10416072319222
+			left: 0,
+			top: 0
 		})
 	})
 )

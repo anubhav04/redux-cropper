@@ -3,6 +3,7 @@ import limit from '../../../selectors/Canvas/limit';
 import Immutable from 'immutable'
 import { pointFromSize, pointFromOffset, zero } from '../../../records/point'
 import { limitRecordOffset, limitRecordSize } from '../../../records/utils'
+import { getRotatedSizes } from '../../../utilities';
 
 const initialState = Immutable.fromJS({
 	size: pointFromSize({
@@ -40,8 +41,12 @@ const zoomTo = (canvas, ratio) => {
 
 	newCanvas = newCanvas.set('size', canvas.get('naturalSize').scaleScalar(Number(ratio)));
 
-	return newCanvas
-		.update('offset', (oldOffset)=> oldOffset.subtract(newCanvas.get('size').subtract(canvas.get('size')).divideScalar(2)))
+	const val = (newCanvas.get('size').subtract(canvas.get('size')))
+					.divideScalar(2);
+
+	newCanvas = newCanvas.update('offset', (oldOffset)=> oldOffset.subtract(val))
+
+	return newCanvas;
 };
 
 /**
@@ -71,9 +76,6 @@ const setCanvasData = (state, {left, top, width, height})=> {
 
 	return newState;
 };
-
-const rotateTo = (image, degree) => image.update('rotate', ()=> Number(degree) % 360);
-const rotate = (image, degree) => rotateTo(image, (image.get('rotate') || 0) + Number(degree));
 
 export const init = (state, {payload:{options, image, cropBox, container}})=> {
 	const viewMode = options.getIn(['options', 'viewMode']);
@@ -122,24 +124,62 @@ export const init = (state, {payload:{options, image, cropBox, container}})=> {
 	})
 };
 
+const rotate = (canvas, options, container, cropBox, image)=> {
+	// Computes rotated sizes with image sizes
+	let rotated = getRotatedSizes({sizePoint: image.get('size'), degree: image.get('rotate')});
+	let aspectRatio = rotated.getAspectRatio();
+	const rotate = image.get('rotate');
+
+	// if (aspectRatio !== canvas.get('aspectRatio')) {
+		const topLeft = rotated.subtract(canvas.get('size')).divideScalar(2);
+		let newNaturalSize = image.get('naturalSize');
+
+		// Computes rotated sizes with natural image sizes
+		if (rotate % 180) {
+			newNaturalSize = getRotatedSizes({sizePoint: image.get('naturalSize'), degree: rotate});
+		}
+
+		let newCanvas = canvas
+			.update('offset', (offset)=>offset.subtract(topLeft))
+			.set('size', rotated)
+			.set('aspectRatio', aspectRatio)
+			.set('naturalSize', newNaturalSize);
+
+		const newOptions = options
+			.set('isPositionLimited', true)
+			.set('isSizeLimited', false);
+
+		newCanvas = limit({
+			options:newOptions, 
+			canvas:newCanvas, 
+			container, 
+			cropBox
+		});
+
+		return newCanvas
+	// }
+	return canvas
+};
+
 export default handleActions({
+		ROTATE_CANVAS: (state, {payload:{options, container, cropBox, image}}) => rotate(state, options, container, cropBox, image),
 		INIT_CANVAS: init,
 		SET_CANVAS_DATA: (state, {payload}) => setCanvasData(state, payload),
 		SET_CANVAS_RAW: (state, {payload}) => payload,
 		ACTION_ZOOM: (state, {payload:ratio}) => zoom(state, ratio),
-		ACTION_ZOOM_BY_COORDS: (state, {payload:{start, start2, end, end2}}) => {
-			const x1 = Math.abs(start.get('x') - start2.get('x'));
-			const y1 = Math.abs(start.get('y') - start2.get('y'));
-			const x2 = Math.abs(end.get('x') - end2.get('x'));
-			const y2 = Math.abs(end.get('y') - end2.get('y'));
+		// ACTION_ZOOM_BY_COORDS: (state, {payload:{start, start2, end, end2}}) => {
+		// 	const x1 = Math.abs(start.get('x') - start2.get('x'));
+		// 	const y1 = Math.abs(start.get('y') - start2.get('y'));
+		// 	const x2 = Math.abs(end.get('x') - end2.get('x'));
+		// 	const y2 = Math.abs(end.get('y') - end2.get('y'));
 
-			const z1 = Math.sqrt(x1 * x1 + y1 * y1);
-			const z2 = Math.sqrt(x2 * x2 + y2 * y2);
+		// 	const z1 = Math.sqrt(x1 * x1 + y1 * y1);
+		// 	const z2 = Math.sqrt(x2 * x2 + y2 * y2);
 
-			const ratio = (z2 - z1) / z1;
+		// 	const ratio = (z2 - z1) / z1;
 
-			return zoom(state, ratio);
-		},
+		// 	return zoom(state, ratio);
+		// },
 		ACTION_MOVE: (state, {payload:{range}}) => {
 			return state
 				.updateIn(['offset', 'x'], (left)=>left + range.get('x'))
@@ -152,6 +192,7 @@ export default handleActions({
 			let newCanvas = state;
 
 			newCanvas = limitRecordOffset(newCanvas);
+			
 			newCanvas = limitRecordSize(newCanvas);
 
 			const newOptions = options.get('options')
@@ -165,15 +206,17 @@ export default handleActions({
 				cropBox
 			});
 
-			const newOldTopLeft = newCanvas.get('offset')
-				.max(newCanvas.get('minOffset'))
-				.min(newCanvas.get('maxOffset'));
+			// const newOldTopLeft = newCanvas.get('offset')
+			// 	.max(newCanvas.get('minOffset'))
+			// 	.min(newCanvas.get('maxOffset'));
 
-			const res = newCanvas
-				.set('oldOffset', newOldTopLeft)
-				.set('offset', newOldTopLeft);
+			// const res = newCanvas
+			// 	.set('oldOffset', newOldTopLeft)
+			// 	.set('offset', newOldTopLeft);
 
-			return res;
+			// console.log(JSON.stringify(res.get('offset')))
+
+			return newCanvas;
 		}
 	},
 	initialState

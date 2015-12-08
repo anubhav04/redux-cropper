@@ -4,6 +4,7 @@ import { conditionalAC } from './utils';
 import { enabledAC } from './conditions';
 import { ACTION_ZOOM } from '../constants/actions';
 import { getOffscreenCroppedImagePromise } from './getCroppedCanvas';
+import { rotate } from '../actions/rotate';
 
 export const dblClick = () =>
 	(dispatch, getState)=> {
@@ -40,7 +41,7 @@ export const resize = enabledAC(({width, height}) =>
 
 export const zoomableAC = conditionalAC((obj, state)=> !state.options.get('zoomable') || !state.options.get('zoomOnWheel'));
 
-export const wheel = R.compose(zoomableAC, enabledAC)
+export const wheel = R.compose(enabledAC)
 ((event) =>
 	(dispatch, getState) => {
 		const {options} = getState();
@@ -65,9 +66,16 @@ export const wheel = R.compose(zoomableAC, enabledAC)
 
 		newRatio = newRatio < 0 ? 1 / (1 - newRatio) : 1 + newRatio;
 
-		dispatch(createAction('ACTION_ZOOM')(newRatio));
+		dispatch(zoom(newRatio));
 	}
 );
+
+export const zoom = (ratio) =>
+	(dispatch, getState) => {
+		const {image} = getState()
+		dispatch(createAction('ACTION_ZOOM')(ratio));
+		dispatch(rotate(image.get('rotate')));
+	}
 
 export const getBlob = (cb) =>
 	(dispatch, getState)=> {

@@ -16,9 +16,9 @@ import { pointFromSize, pointFct, pointFromOffset } from '../records/point';
 const allSelector = createStructuredSelector({
 	testImg: (state)=>state.test,
 	canvasData: (state)=>state.canvas,
-	containerData: containerSelector,
-	cropBoxData: CropBoxSelector,
-	imageData: ImageSelector,
+	containerData: (state)=>state.container,
+	cropBoxData: (state)=>state.cropBox,
+	imageData: (state)=>state.image,
 	_options: optionsSelector
 });
 

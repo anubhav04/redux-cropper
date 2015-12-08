@@ -4,11 +4,11 @@ const  Immutable  = require('immutable')
 
 module.exports = Immutable.fromJS({
 	size: pointFromSize({
-		"width": 697.1539393939408,
-		"height": 392.14909090909174
+		width: 697.1539393939408,
+		height: 392.14909090909174
 	}),
 	offset: pointFromOffset({
-		"left": 0.4230303030295204,
-		"top": -4.831690603168681e-13
+		left: 0.4230303030295204,
+		top: -4.831690603168681e-13
 	})
 });

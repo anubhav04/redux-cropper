@@ -1,7 +1,8 @@
 import { createAction, handleActions } from 'redux-actions';
 import Immutable from 'immutable'
 import { mergeReducer } from './utils';
-import { pointFromSize, pointFromOffset, pointFct } from '../../records/point';
+import { pointFromSize, pointFromOffset, pointFct, zero } from '../../records/point';
+import { getRotatedSizes } from '../../utilities';
 
 const scaleY = (scaleY) =>
 	(dispatch, getState)=> {
@@ -23,11 +24,11 @@ const scale = (state, scaleX, scaleY) =>{
 	let newState = state;
 
 	if (newScaleX) {
-		newState = newState.setIn(['scale', 'x'], newScaleX);
+		newState = newState.updateIn(['scale', 'x'],(x)=>x * newScaleX);
 	}
 
 	if (newScaleY) {
-		newState = newState.setIn(['scale', 'y'], newScaleY);
+		newState = newState.updateIn(['scale', 'y'],(y)=>y * newScaleY);
 	}
 	return newState;
 }
@@ -38,10 +39,36 @@ export const init = (state, {payload:{aspectRatio, rotate, naturalSize, size}})=
 					.set('size', size)
 					.set('aspectRatio', aspectRatio ? aspectRatio : naturalSize.getAspectRatio())
 
+const rotate = (image, canvas) => {
+	let newImage = image;
+
+	const reversed = newImage.get('rotate') ? getRotatedSizes({
+		sizePoint: canvas.get('size'),
+		degree: newImage.get('rotate'),
+		aspectRatio: newImage.get('aspectRatio'),
+		isReversed: true
+	}) : null;
+
+	return reversed ?
+		newImage
+			// .set('size', reversed)
+			.set('offset', canvas.get('size').subtract(reversed).divideScalar(2))
+		:
+		newImage
+			// .set('size', canvas.get('size'))
+			.set('offset', zero);
+};					
+
 export default handleActions({
 		SET_STATE_IMAGE: init,
-		SET_ROTATE: (state, {payload}) => state.set('rotate', payload),
-		ACTION_ZOOM: (state, {payload:ratio}) => scale(state, ratio)
+		ROTATE_IMAGE: (state, {payload:{canvas}}) => rotate(state, canvas),
+		SET_ROTATE: (state, {payload}) => {
+			
+			return state.set('rotate', payload)
+		},
+		ACTION_ZOOM: (state, {payload:ratio}) => {
+			return scale(state, ratio)
+		}
 	},
 	Immutable.fromJS({
 		aspectRatio: null,
