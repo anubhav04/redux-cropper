@@ -1,19 +1,19 @@
 ##[Demo](http://lapanoid.github.io/redux-cropper/)
 
-Port of https://github.com/fengyuanchen/cropper to react, redux and immutable-js
+Port of [fengyuanchen cropper](https://github.com/fengyuanchen/cropper) to react, redux and immutable-js
 
 Under development, please report an issue if you run into some bug
 
-api should be as close as possible to https://github.com/fengyuanchen/cropper
+api should be as close as possible to (this)[https://github.com/fengyuanchen/cropper/blob/master/README.md]
 
 #Usage
 
 ```
 npm i redux-cropper --save
 ```
-see example here - https://github.com/lapanoid/redux-cropper/blob/master/example/src/app.js
+see example (here)[https://github.com/lapanoid/redux-cropper/blob/master/example/src/app.js]
 
-You also should use these webpack loaders as redux-cropper use css-modules internally (see https://github.com/css-modules/css-modules/pull/65 for details)
+You also should use these webpack loaders as redux-cropper use css-modules internally (see [this PR](https://github.com/css-modules/css-modules/pull/65) for details)
 
 ```
 {
