@@ -28,4 +28,3 @@ export default createSelector(
 	imageSelector,
 	render
 )
-

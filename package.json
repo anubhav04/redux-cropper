@@ -26,6 +26,7 @@
     "deploy": "./node_modules/.bin/gh-pages -d dist",
     "playground": "node devServer.js --env playground",
     "start": "node server.js",
+    "update:demo": "cd example && npm run update:gh-pages",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "files": [
