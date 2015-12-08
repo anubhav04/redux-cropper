@@ -1,5 +1,7 @@
 ##[Demo](http://lapanoid.github.io/redux-cropper/)
 
+[![Join the chat at https://gitter.im/lapanoid/redux-cropper](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lapanoid/redux-cropper?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Port of [fengyuanchen cropper](https://github.com/fengyuanchen/cropper) to react, redux and immutable-js
 
 Under development, please report an issue if you run into some bug
