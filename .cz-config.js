@@ -17,6 +17,7 @@ module.exports = {
 
   scopes: [
     {name: 'package.json'},
+    {name: 'index.js'},
     {name: 'other'}
   ],
 
@@ -24,11 +25,8 @@ module.exports = {
   scopeOverrides: {
     fix: [
       {name: 'package.json'},
-      {name: 'merge'},
       {name: 'style'},
-      {name: 'e2eTest'},
       {name: 'unitTest'}
     ]
   }
-
 };
