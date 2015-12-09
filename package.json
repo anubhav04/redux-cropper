@@ -27,7 +27,9 @@
     "playground": "node devServer.js --env playground",
     "start": "node server.js",
     "update:demo": "cd example && npm run update:gh-pages",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "cz": "git add . && git cz",
+    "czp": "npm run cz && git push"
   },
   "files": [
     "lib"
@@ -55,7 +57,8 @@
     "redux-logger": "2.0.4",
     "redux-promise": "0.5.0",
     "redux-thunk": "0.1.0",
-    "reselect": "2.0.0"
+    "reselect": "2.0.0",
+    "deep-diff": "^0.3.3"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.1.0",
@@ -71,7 +74,7 @@
     "copyfiles": "^0.2.1",
     "css-loader": "^0.23.0",
     "css-modules-require-hook": "^2.1.0",
-    "deep-diff": "^0.3.3",
+    "cz-customizable": "^2.3.3",
     "eslint": "^1.9.0",
     "eslint-config-airbnb": "0.0.8",
     "eslint-friendly-formatter": "1.2.2",
@@ -118,7 +121,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "node_modules/cz-customizable"
     }
   }
 }
