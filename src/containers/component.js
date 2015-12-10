@@ -14,10 +14,8 @@ export default (options)=>{
 		}
 
 		render() {
-			const options = !disableOptions ? this.props: {}
-
 			return (
-				<ConnectedAll options={options} store={store}/>
+				<ConnectedAll options={this.props} store={store}/>
 			);
 		}
 	}
