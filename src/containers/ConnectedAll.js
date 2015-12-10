@@ -27,11 +27,11 @@ class ConnectedAll extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		const { newOptions, options } = nextProps;
 		if(options.disableOptions){
 			return;
 		}
-		
-		const { newOptions, options } = nextProps;
+	
 		newOptions(options);
 	}
 

@@ -20,14 +20,5 @@ module.exports = {
     {name: 'index.js'},
     {name: 'ConnectedAll'},
     {name: 'other'}
-  ],
-
-  //it needs to match the value for field type. Eg.: 'fix'
-  scopeOverrides: {
-    fix: [
-      {name: 'package.json'},
-      {name: 'style'},
-      {name: 'unitTest'}
-    ]
-  }
+  ]
 };
