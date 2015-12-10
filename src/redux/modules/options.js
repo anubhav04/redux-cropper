@@ -19,11 +19,7 @@ export const newOptions = (obj)=> {
 			return;
 		}
 		const newOptions = Immutable.fromJS(rest);
-		//console.log(JSON.stringify(lastPassedOptions.toJS()))
-		//console.log(JSON.stringify(newOptions.toJS()))
-		// TODO
-		// Immutable.is(lastPassedOptions, newOptions) - don't work here =(
-
+	
 		if (Immutable.is(lastPassedOptions, newOptions)) {
 			return;
 		}

@@ -1,26 +1,13 @@
 import { zero, one, pointFromSize } from '../records/point'
 import { getRotatedSizes } from '../utilities'
 import Immutable from 'immutable'
+import { onLoadUrlPromise } from './index'
 
-export const getOffscreenCroppedImagePromise = (obj)=>
-	new Promise((resolve, reject)=>{
-		
-			const downloadingImage = new Image();
-			downloadingImage.onload = function() {
-				try {
-					resolve(getBlobFromSrc({
-						obj, 
-						src: this.src, 
-						type: "image/png", 
-						quality: 1
-					}))
-				} catch(ex){
-					reject(ex);
-				}
-			};
-			downloadingImage.src = obj.options.get('url');
-		
-	});
+export default (obj)=>
+	onLoadUrlPromise(obj.options.get('url'))
+	.then(
+		({src})=> getBlobFromSrc({obj, src, type: "image/png", quality: 1})
+	)
 
 export const getBlobFromSrc = ({obj, src, type, quality})=>{
 	const options = obj.options;
@@ -143,7 +130,6 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize, sc
 }
 
 export const getSourceCanvasPure = ({ image }) => {
-
 	let canvasSize  = image.get('naturalSize')
 	const rotate = image.get('rotate');
 	const scale = image.get('scale');

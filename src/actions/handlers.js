@@ -3,7 +3,7 @@ import { createAction, handleActions } from 'redux-actions';
 import { conditionalAC } from './utils';
 import { enabledAC } from './conditions';
 import { ACTION_ZOOM } from '../constants/actions';
-import { getOffscreenCroppedImagePromise } from './getCroppedCanvas';
+import getOffscreenCroppedImagePromise from '../imageUtils/getCroppedImagePromise.js';
 import { rotate } from '../actions/rotate';
 
 export const dblClick = () =>
