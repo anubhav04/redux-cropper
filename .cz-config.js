@@ -18,6 +18,7 @@ module.exports = {
   scopes: [
     {name: 'package.json'},
     {name: 'index.js'},
+    {name: 'ConnectedAll'},
     {name: 'other'}
   ],
 

@@ -12,7 +12,6 @@ import * as handlers from '../actions/handlers';
 import ImageContainer from '../components/ImageContainer';
 import { pointFromSize, pointFct, pointFromOffset } from '../records/point';
 
-
 const allSelector = createStructuredSelector({
 	testImg: (state)=>state.test,
 	canvasData: (state)=>state.canvas,
@@ -28,6 +27,10 @@ class ConnectedAll extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
+		if(options.disableOptions){
+			return;
+		}
+		
 		const { newOptions, options } = nextProps;
 		newOptions(options);
 	}

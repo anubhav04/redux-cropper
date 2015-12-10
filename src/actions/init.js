@@ -38,7 +38,6 @@ export const initCanvas = () =>
 export const initCropBox = () =>
 	(dispatch, getState)=> {
 		const {options, canvas, cropBox, container} = getState();
-		console.log('------------')
 		dispatch(createAction(INIT_CROP_BOX)({options: options, canvas, cropBox, container}))
 	};
 
