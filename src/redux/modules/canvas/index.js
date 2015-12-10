@@ -4,6 +4,7 @@ import Immutable from 'immutable'
 import { pointFromSize, pointFromOffset, zero } from '../../../records/point'
 import { limitRecordOffset, limitRecordSize } from '../../../records/utils'
 import { getRotatedSizes } from '../../../utilities';
+import { forceAspectRatioOnState } from '../../../records/utils';
 
 const initialState = Immutable.fromJS({
 	size: pointFromSize({
@@ -47,34 +48,6 @@ const zoomTo = (canvas, ratio) => {
 	newCanvas = newCanvas.update('offset', (oldOffset)=> oldOffset.subtract(val))
 
 	return newCanvas;
-};
-
-/**
- * Set the canvas position and size with new data
- *
- * @param {Object} data
- */
-const setCanvasData = (state, {left, top, width, height})=> {
-	let newState = state;
-	const aspectRatio = newState.get('aspectRatio');
-
-	if (isNumber(left)) {
-		newState = newState.updateIn(['offset', 'x'], ()=>left);
-	}
-
-	if (isNumber(top)) {
-		newState = newState.updateIn(['offset', 'y'], ()=>top);
-	}
-
-	if (isNumber(width)) {
-		return newState.updateIn(['size', 'x'], ()=>width)
-			.updateIn(['size', 'y'], ()=>width / aspectRatio);
-	} else if (isNumber(height)) {
-		return newState.updateIn(['size', 'y'], ()=>height)
-			.updateIn(['size', 'x'], ()=>height * aspectRatio);
-	}
-
-	return newState;
 };
 
 export const init = (state, {payload:{options, image, cropBox, container}})=> {
@@ -164,8 +137,7 @@ const rotate = (canvas, options, container, cropBox, image)=> {
 export default handleActions({
 		ROTATE_CANVAS: (state, {payload:{options, container, cropBox, image}}) => rotate(state, options, container, cropBox, image),
 		INIT_CANVAS: init,
-		SET_CANVAS_DATA: (state, {payload}) => setCanvasData(state, payload),
-		SET_CANVAS_RAW: (state, {payload}) => payload,
+		SET_CANVAS_DATA: (state, {payload}) => forceAspectRatioOnState(state, payload),
 		ACTION_ZOOM: (state, {payload:ratio}) => zoom(state, ratio),
 		// ACTION_ZOOM_BY_COORDS: (state, {payload:{start, start2, end, end2}}) => {
 		// 	const x1 = Math.abs(start.get('x') - start2.get('x'));

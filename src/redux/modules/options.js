@@ -1,8 +1,9 @@
 import { createAction, handleActions } from 'redux-actions';
 import R from 'ramda'
 import Immutable from 'immutable'
-import {init} from '../../actions/init'
-import {rotate} from '../../actions/rotate'
+import { init } from '../../actions/init'
+import { rotate } from '../../actions/rotate'
+import { resize, resizeWidth, resizeHeight } from '../../actions/handlers'
 import { pointFromSize } from '../../records/point';
 import { diff } from 'deep-diff';
 
@@ -18,11 +19,7 @@ export const newOptions = (obj)=> {
 			dispatch(newOptionsNoCheck(rest))
 			return;
 		}
-		const newOptions = Immutable.fromJS(rest);
-		//console.log(JSON.stringify(lastPassedOptions.toJS()))
-		//console.log(JSON.stringify(newOptions.toJS()))
-		// TODO
-		// Immutable.is(lastPassedOptions, newOptions) - don't work here =(
+		const newOptions = Immutable.fromJS(rest)
 
 		if (Immutable.is(lastPassedOptions, newOptions)) {
 			return;
@@ -32,16 +29,29 @@ export const newOptions = (obj)=> {
 	}
 };
 
+const isPropertyEdited = (diff, propName)=>{
+	const [{kind, lhs, rhs, path}] = diff;
+
+	return kind === 'E' && path[0] === propName
+}
+
 export const newOptionsNoCheck = (obj, diff)=> {
 	return (dispatch)=> {
 		dispatch(createAction(NEW_OPTIONS)(obj));
 
 		if(diff && diff.length == 1) {
-			const [{kind, lhs, rhs, path}] = diff;
+			const [{rhs}] = diff;
 
-			if(kind === 'E' && path[0] === "rotate") {
-				dispatch(rotate(rhs));
-				return;
+			if(isPropertyEdited(diff, "rotate")){
+				return dispatch(rotate(rhs));
+			}
+
+			if(isPropertyEdited(diff, "width")){
+				return dispatch(resizeWidth(rhs));
+			}
+
+			if(isPropertyEdited(diff, "height")){
+				return dispatch(resizeHeight(rhs));
 			}
 		}
 

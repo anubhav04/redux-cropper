@@ -60,15 +60,11 @@ const rotate = (image, canvas) => {
 };					
 
 export default handleActions({
+		RESIZE_IMAGE: (state, {payload}) => state.set('size', payload),
+		SET_ROTATE: (state, {payload}) => state.set('rotate', payload),
 		SET_STATE_IMAGE: init,
 		ROTATE_IMAGE: (state, {payload:{canvas}}) => rotate(state, canvas),
-		SET_ROTATE: (state, {payload}) => {
-			
-			return state.set('rotate', payload)
-		},
-		ACTION_ZOOM: (state, {payload:ratio}) => {
-			return scale(state, ratio)
-		}
+		ACTION_ZOOM: (state, {payload:ratio}) => scale(state, ratio),
 	},
 	Immutable.fromJS({
 		aspectRatio: null,

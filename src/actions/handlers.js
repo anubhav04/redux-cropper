@@ -4,7 +4,9 @@ import { conditionalAC } from './utils';
 import { enabledAC } from './conditions';
 import { ACTION_ZOOM } from '../constants/actions';
 import { getOffscreenCroppedImagePromise } from './getCroppedCanvas';
-import { rotate } from '../actions/rotate';
+import { rotate } from './rotate';
+import { initContainer } from './init';
+import { pointFromSize } from '../records/point';
 
 export const dblClick = () =>
 	(dispatch, getState)=> {
@@ -13,28 +15,42 @@ export const dblClick = () =>
 
 		if (!options.toggleDragModeOnDblclick) {
 			return
-		}
+		} 
 	};
 
-const transformImObj = (func) =>
-	R.compose(
-		(notIm)=>Immutable.fromJS,
-		R.toPairs,
-		R.map(func),
-		R.toPairs,
-		(im)=>im.toJS());
+export const resizeWidth = (width)=>
+	(dispatch, getState)=>{
+		dispatch(resize({
+			width,
+			height: getState().options.getIn(['options', 'height'])
+		}))
+	}
+
+export const resizeHeight = (height)=>
+	(dispatch, getState)=>{
+		dispatch(resize({
+			height,
+			width: getState().options.getIn(['options', 'width'])
+		}))
+	}
 
 export const resize = enabledAC(({width, height}) =>
 	(dispatch, getState)=> {
-		const {options} = getState();
-		const {options:{canvas, cropBox, container}} = options.toJS();
+		const {canvas, cropBox, container} = getState();
 
 		const ratio = container.getIn(['size', 'x']) / width;
 
 		// Resize when width changed or height changed
 		if (ratio !== 1 || container.getIn(['size', 'y']) !== height) {
-			dispatch(createAction(SET_CANVAS_DATA)(transformImObj((n)=>n * ratio)(canvas)));
-			dispatch(createAction(SET_CROP_BOX_DATA)(transformImObj((n)=>n * ratio)(cropBox)))
+			dispatch(initContainer(pointFromSize({width, height})));
+			// dispatch(createAction('SET_CANVAS_DATA')({
+			// 	offset: canvas.get('offset').scaleScalar(ratio), 
+			// 	size: canvas.get('size').scaleScalar(ratio)
+			// }));
+			// dispatch(createAction('SET_CROP_BOX_DATA')({
+			// 	offset: cropBox.get('offset').scaleScalar(ratio), 
+			// 	size: cropBox.get('size').scaleScalar(ratio)
+			// }))
 		}
 	}
 );

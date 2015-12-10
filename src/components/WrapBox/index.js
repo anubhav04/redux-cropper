@@ -16,8 +16,8 @@ class WrapBox extends PureComponent {
 
 		return <div styleName="cropper-wrap-box">
 			<div styleName="cropper-canvas" style={{
-				...canvas.get('size').getSize()
-				// , ...offset.getOffset()
+				...canvas.get('size').negate().getSize(), 
+				// ...offset.getOffset()
 		}}>
 				<img styleName="cropper-canvas-img" src={url}
 						 style={{

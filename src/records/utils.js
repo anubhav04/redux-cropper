@@ -1,3 +1,5 @@
+import Immutable from 'immutable';
+
 export const limitRecordOffset = (record)=> {
 	let newRecord = record;
 	if (isCoordOverflow('x')(newRecord)) {
@@ -41,5 +43,20 @@ export const limitRecordPoint = (propName)=> {
 		}
 		return record.update(propName, (prop)=>prop.max(record.get(minProp)).min(record.get(maxProp)));
 	}
+};
+
+export const forceAspectRatioOnState = (state, {offset, size})=> {
+	const aspectRatio = state.get('aspectRatio');
+
+	let newState = state;
+	newState = newState
+		.set('offset', offset)
+		.set('size', size);
+
+	if (aspectRatio && !Immutable.is(state.get('size'), newState.get('size'))) {
+		newState.set('size', newState.get('size').forceAspectRatio(aspectRatio))
+	}
+
+	return newState;
 };
 

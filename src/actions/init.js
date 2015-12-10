@@ -38,7 +38,6 @@ export const initCanvas = () =>
 export const initCropBox = () =>
 	(dispatch, getState)=> {
 		const {options, canvas, cropBox, container} = getState();
-		console.log('------------')
 		dispatch(createAction(INIT_CROP_BOX)({options: options, canvas, cropBox, container}))
 	};
 
@@ -48,7 +47,7 @@ export const init = () =>
 		//if(myState.get('isInited')){
 		//	return;
 		//}
-		const size = pointFromSize(options.get('options').get('size'));
+		const size = pointFromSize(options.get('options').toJS());
 
 		dispatch(initImage({naturalSize: pointFromSize({
 			width: 1280,

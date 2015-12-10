@@ -14,7 +14,7 @@ import {
 import {zero} from '../../../records/point';
 import direction from './direction';
 import limit from '../../../selectors/CropBox/limit';
-import { limitRecordPoint } from '../../../records/utils';
+import { limitRecordPoint, forceAspectRatioOnState } from '../../../records/utils';
 import { pointFromSize, pointFromOffset } from '../../../records/point';
 
 export const init = (state, {payload:{options:_options, canvas, cropBox, container}}) => {
@@ -84,64 +84,25 @@ export const actionCrop = (range, offset) =>
 		dispatch(createAction(RAW_SET_CROPBOX_DATA), {offset: newOffset, size, show: true});
 	};
 
-
 export default handleActions({
-		...direction,
-		RAW_SET_CROPBOX_DATA: (state, payload) => state.merge(payload),
-		SET_CROPBOX_DATA: (state, {payload:{data:{left, top, width, height}}}) => {
-			const aspectRatio = state.get('aspectRatio');
-			let isWidthChanged;
-			let isHeightChanged;
-
-			let newState = state;
-
-			if (isNumber(left)) {
-				newState = newState.setIn(['offset', 'x'], left);
-			}
-
-			if (isNumber(top)) {
-				newState = newState.setIn(['offset', 'y'], top);
-			}
-
-			if (isNumber(width) && width !== state.width) {
-				isWidthChanged = true;
-				newState = newState.setIn(['size', 'x'], width);
-			}
-
-			if (isNumber(height) && height !== state.height) {
-				isHeightChanged = true;
-				newState = newState.setIn(['size', 'y'], height);
-			}
-
-			if (aspectRatio) {
-				if (isWidthChanged) {
-					newState = newState.setIn(['size', 'y'], newState.get('width') / aspectRatio);
-				} else if (isHeightChanged) {
-					newState = newState.setIn(['size', 'x'], newState.get('height') * aspectRatio);
-				}
-			}
-
-			return newState;
-		},
-		ACTION_ALL: (state, {payload:{range:{x, y}}}) => state
-			.updateIn(['offset', 'x'], (left)=>left + x)
-			.updateIn(['offset', 'y'], (top)=>top + y),
-		SET_ASPECT_RATIO: (state, {payload:{aspectRatio}}) => {
-			// 0 -> NaN
-			const newAspectRatio = Math.max(0, aspectRatio) || NaN;
-		},
-		INIT_CROP_BOX: init
+	...direction,
+	RAW_SET_CROPBOX_DATA: (state, payload) => state.merge(payload),
+	SET_CROPBOX_DATA: (state, {payload}) => forceAspectRatioOnState(state, payload),
+	ACTION_ALL: (state, {payload:{range:{x, y}}}) => state
+		.updateIn(['offset', 'x'], (left)=>left + x)
+		.updateIn(['offset', 'y'], (top)=>top + y),
+	SET_ASPECT_RATIO: (state, {payload:{aspectRatio}}) => {
+		// 0 -> NaN
+		const newAspectRatio = Math.max(0, aspectRatio) || NaN;
 	},
-	Immutable.fromJS({
-		size: pointFromSize({
-			width: 0,
-			height: 0
-		}),
-		offset: pointFromOffset({
-			left: 0,
-			top: 0
-		})
+	INIT_CROP_BOX: init
+}, Immutable.fromJS({
+	size: pointFromSize({
+		width: 0,
+		height: 0
+	}),
+	offset: pointFromOffset({
+		left: 0,
+		top: 0
 	})
-)
-
-
+}))

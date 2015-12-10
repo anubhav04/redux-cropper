@@ -36,6 +36,19 @@ class PointRecord extends _PointRecord {
 		return imPointFct(this.update(coordType, ()=>val))
 	}
 
+	forceAspectRatio(aspectRatio) {
+		let newPoint = this;
+	    if(newPoint.get('x') && newPoint.get('y')){
+	    	if(newPoint.get('x')){
+	    		newPoint = newPoint.set('y', newPoint.get('x') / aspectRatio);
+	    	} else if(newPoint.get('y')){
+	    		newPoint = newPoint.set('x', newPoint.get('y') * aspectRatio);
+	    	}
+	    }
+
+		return imPointFct(newPoint)
+	}
+
 	updateCoordsOnTransform(funcX, funcY) {
 		return imPointFct(this.update('x', funcX).update('y', (funcY ? funcY : funcX)))
 	}

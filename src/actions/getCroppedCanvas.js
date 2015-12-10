@@ -3,8 +3,7 @@ import { getRotatedSizes } from '../utilities'
 import Immutable from 'immutable'
 
 export const getOffscreenCroppedImagePromise = (obj)=>
-	new Promise((resolve, reject)=>{
-		
+	new Promise((resolve, reject)=>{		
 			const downloadingImage = new Image();
 			downloadingImage.onload = function() {
 				try {
@@ -215,7 +214,10 @@ export const getCroppedImageCanvas = ({ options, cropData, isRounded }) => {
 
 	const originalSize = data.get('size');
 	const aspectRatio = originalSize.getAspectRatio();
-	let scaledSize = pointFromSize(options.get('size'));
+	let scaledSize = pointFromSize({
+		width: options.get('width'), 
+		height: options.get('height')
+	});
 	let scaledRatio = null;
 	if (scaledSize.get('x')) {
 		scaledSize = scaledSize.set('y', scaledSize.get('x') / aspectRatio);
