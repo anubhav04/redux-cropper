@@ -4,7 +4,7 @@ import Immutable from 'immutable'
 import { onLoadUrlPromise } from './index'
 
 export default (obj)=>
-	onLoadUrlPromise(obj.options.get('url'))
+	onLoadUrlPromise({url:obj.options.get('url')})
 	.then(
 		({src})=> getBlobFromSrc({obj, src, type: "image/png", quality: 1})
 	)
@@ -142,21 +142,19 @@ export const getSourceCanvasPure = ({ image }) => {
 	const advanced = rotatable || scalable;  
 
 	let translate = scalable ? canvasSize.divideScalar(2) : null;
-	let rotated;
-	if (rotatable) { 
-		rotated = getRotatedSizes({
+	 
+	const rotated = getRotatedSizes({
 			sizePoint: canvasSize,
 			degree: rotate,
 			aspectRatio: image.get('aspectRatio')
 		});
 
-		canvasSize = rotated;
-		translate = rotated.divideScalar(2);
-	}
-
+	canvasSize = rotated;
+	translate = rotated.divideScalar(2);
+	
 	const offset = true ? image.get('naturalSize').negate().divideScalar(2) : zero;
 	
-	return {canvasSize, translate, rotate, scale, offset, resize:image.get('naturalSize')};
+	return {canvasSize, translate, rotate, scale, offset, resize: image.get('naturalSize')};
 }
 
 export const getSourceCanvas = ({ imageElem, image, canvasData }) => {

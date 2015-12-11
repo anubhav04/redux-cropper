@@ -17,9 +17,10 @@ module.exports = {
 
   scopes: [
     {name: 'package.json'},
-    {name: 'index.js'},
+    {name: 'api'},
     {name: 'ConnectedAll'},
     {name: 'imageUtils'},
+    {name: 'getCroppedImagePromise'},
     {name: 'other'}
   ]
 };
