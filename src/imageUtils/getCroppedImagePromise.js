@@ -1,4 +1,4 @@
-import { zero, one, pointFromSize } from '../records/point'
+import { zero, one, pointFromSize, pointFct } from '../records/point'
 import { getRotatedSizes } from '../utilities'
 import Immutable from 'immutable'
 import { onLoadUrlPromise } from './index'
@@ -14,11 +14,11 @@ export const getBlobFromSrc = ({obj, src, type, quality})=>{
 	const imageElem = document.createElement("img");
 	imageElem.src = src;
 
-	const { data, cropData, scaledRatio } = getCroppedImageCanvas({...obj, imageElem});
-
-	const canvasSize = cropData.canvas.get('size');
+	let data = getData({...obj});
+	const canvasSize = obj.cropData.canvas.get('size');
 
 	const canvas = document.createElement('canvas');
+	
 	canvas.width = data.getIn(['size', 'x']);
 	canvas.height = data.getIn(['size', 'y']);
 
@@ -31,7 +31,7 @@ export const getBlobFromSrc = ({obj, src, type, quality})=>{
 		context.fillRect(0, 0, canvasSize.get('x'), canvasSize.get('y'));
 	}
 
-	const drawImageParams = getDrawImageParams({imageElem, data, cropData, scaledRatio});
+	const drawImageParams = getDrawImageParams({imageElem, data, cropData:obj.cropData});
 	
 	if(typeof IS_TEST === 'undefined'){
 		// https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D.drawImage
@@ -41,7 +41,7 @@ export const getBlobFromSrc = ({obj, src, type, quality})=>{
 	return canvas.toDataURL(type, quality);
 }
 
-export const getDrawImageParams = ({ imageElem, cropData, data, scaledRatio})=> {
+export const getDrawImageParams = ({ imageElem, cropData, data})=> {
 	const sourceCanvas = getSourceCanvas({
 		imageElem, 
 		image: cropData.image, 
@@ -49,14 +49,13 @@ export const getDrawImageParams = ({ imageElem, cropData, data, scaledRatio})=> 
 	});
 
 	return [sourceCanvas, ...getDrawImageParamsParams({
-		scaledRatio,
 		srcPoint: data.get('offset'), 
 		originalSize: data.get('size'), 
 		sourceSize: pointFromSize(sourceCanvas)
 	})];
 };
 
-export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize, scaledRatio})=>{
+export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize})=>{
 	let args = [];
 	let dstPoint = zero;
 	let srcSize = zero;
@@ -110,12 +109,6 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize, sc
 		Math.floor(srcSize.get('y'))
 	];
 
-	// Scale destination sizes
-	// if (scaledRatio) {
-	// 	dstPoint = dstPoint.scaleScalar(scaledRatio);
-	// 	dstSize = dstSize.scaleScalar(scaledRatio);
-	// }
-
 	// Avoid "IndexSizeError" in IE and Firefox
 	if (dstSize.get('x') > 0 && dstSize.get('y') > 0) {
 		args = [
@@ -129,7 +122,7 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize, sc
 	return args;
 }
 
-export const getSourceCanvasPure = ({ image }) => {
+export const getSourceCanvasPure = ({ image, canvasData }) => {
 	let canvasSize  = image.get('naturalSize')
 	const rotate = image.get('rotate') || 0;
 	const scale = image.get('scale');
@@ -137,7 +130,7 @@ export const getSourceCanvasPure = ({ image }) => {
 	const rotated = getRotatedSizes({
 		sizePoint: canvasSize,
 		degree: rotate,
-		aspectRatio: image.get('aspectRatio')
+		aspectRatio: canvasData.get('size').getAspectRatio()
 	});
 
 	canvasSize = rotated;
@@ -154,7 +147,8 @@ export const getSourceCanvas = ({ imageElem, image, canvasData }) => {
 
 	const {canvasSize, translate, rotate, scale, offset, resize} = getSourceCanvasPure({ 
 		imageElem, 
-		image
+		image,
+		canvasData
 	});
 
 	canvas.width = canvasSize.get('x');
@@ -185,45 +179,27 @@ export const getSourceCanvas = ({ imageElem, image, canvasData }) => {
 	return canvas;
 };
 
-export const getCroppedImageCanvas = ({ options, cropData, isRounded }) => {
-	const data = getData({ options, cropData, isRounded });
-
-	const originalSize = data.get('size');
-	const aspectRatio = originalSize.getAspectRatio();
-	let scaledSize = pointFromSize(options.get('size'));
-	let scaledRatio = null;
-	if (scaledSize.get('x')) {
-		scaledSize = scaledSize.set('y', scaledSize.get('x') / aspectRatio);
-		scaledRatio = scaledSize.get('x') / originalSize.get('x');
-	} else if (scaledSize.get('y')) {
-		scaledSize = scaledSize.set('x', scaledSize.get('y') * aspectRatio);
-		scaledRatio = scaledSize.get('y') / originalSize.get('y');
-	}
-
-	const canvasSize = pointFromSize({
-		width: Math.round(scaledSize.get('x') || originalSize.get('x')),
-		height: Math.round(scaledSize.get('y') || originalSize.get('y'))
-	});
-
-	return {data, cropData, scaledRatio}
-};
-
 export const getData = ({ options, cropData:{image, canvas, cropBox}, isRounded }) => {
 	let data = Immutable.fromJS({
 		offset: cropBox.get('offset').subtract(canvas.get('offset')),
 		size: cropBox.get('size')
 	});
 
-	const ratio = image.getIn(['size', 'x']) / image.getIn(['naturalSize', 'x']);
+	const ratioPoint = pointFct({
+		x: image.getIn(['naturalSize', 'x']) / image.getIn(['size', 'x']),
+		y: image.getIn(['naturalSize', 'y']) / image.getIn(['size', 'y'])
+	})
 
 	const onRatio = (point)=> {
-		const newPoint = point.divideScalar(ratio);
+		const newPoint = point.scale(ratioPoint);
 		return isRounded ? newPoint.updateCoordsOnTransform(Math.round) : newPoint;
 	}
 
 	data = data
 	.update('offset', onRatio)
 	.update('size', onRatio);
+
+	// data = data.setIn(['x'], 153.60000000000002)
 
 	if (options.get('rotatable')) {
 		data = data.set('rotate', image.get('rotate') || 0)
