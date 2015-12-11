@@ -64,7 +64,7 @@ export const getTransform = ({scale, rotate}) => {
 
 export const getRotatedSizes = ({sizePoint, degree, aspectRatio, isReversed}) => {
 	let newSizePoint = sizePoint;
-	const deg = Math.abs(degree) % 180;
+	const deg = Math.abs(degree || 0) % 180;
 	const arc = (deg > 90 ? (180 - deg) : deg) * Math.PI / 180;
 	const sinArc = Math.sin(arc);
 	const cosArc = Math.cos(arc);
@@ -79,58 +79,4 @@ export const getRotatedSizes = ({sizePoint, degree, aspectRatio, isReversed}) =>
 	}
 
 	return newSizePoint;
-};
-
-export const getSourceCanvas = (image, data) => {
-	const canvas = $('<canvas>')[0];
-	const context = canvas.getContext('2d');
-	let x = 0;
-	let y = 0;
-	const {naturalSize, rotate, scale} = data;
-
-	const scalable = isNumber(scale.get('x')) && isNumber(scale.get('y')) && (scale.get('x') !== 1 || scale.get('y') !== 1);
-	const rotatable = isNumber(rotate) && rotate !== 0;
-	const advanced = rotatable || scalable;
-	let canvasSize = naturalSize;
-	let translate;
-
-	let rotated;
-
-	if (scalable) {
-		translate = naturalSize.divideScalar(2);
-	}
-
-	if (rotatable) {
-		rotated = getRotatedSizes({sizePoint: naturalSize, degree: rotate});
-
-		canvasSize = rotated;
-		translate = rotated.divideScalar(2);
-	}
-
-	canvas.width = canvasSize.get('x');
-	canvas.height = canvasSize.get('y');
-
-	if (advanced) {
-		translate = naturalSize.negate().divideScalar(2);
-
-		context.save();
-		context.translate(translate.get('x'), translate.get('y'));
-	}
-
-	if (rotatable) {
-		context.rotate(rotate * Math.PI / 180);
-	}
-
-	// Should call `scale` after rotated
-	if (scalable) {
-		context.scale(scale.get('x'), scale.get('y'));
-	}
-
-	context.drawImage(image, x, y, naturalSize.get('x'), naturalSize.get('y'));
-
-	if (advanced) {
-		context.restore();
-	}
-
-	return canvas;
 };
