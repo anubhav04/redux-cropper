@@ -11,26 +11,27 @@ const NEW_OPTIONS = 'NEW_OPTIONS';
 export const newOptions = (obj)=> {
 	const {onRedux, ...rest} = obj;
 	return (dispatch, getState)=> {
+		const newOptions = Immutable.fromJS(rest);
 		const {options} = getState();
+
 		const lastPassedOptions = options.get('lastPassedOptions');
 
-		if(!lastPassedOptions){
-			dispatch(newOptionsNoCheck(rest))
+		if(!lastPassedOptions) {
+			dispatch(newOptionsNoCheck(lastPassedOptions, newOptions))
 			return;
 		}
-		const newOptions = Immutable.fromJS(rest);
 	
 		if (Immutable.is(lastPassedOptions, newOptions)) {
 			return;
 		}
 
-		dispatch(newOptionsNoCheck(rest, diff(lastPassedOptions.toJS(), newOptions.toJS())))
+		dispatch(newOptionsNoCheck(lastPassedOptions, newOptions, diff(lastPassedOptions.toJS(), newOptions.toJS())))
 	}
 };
 
-export const newOptionsNoCheck = (obj, diff)=> {
+export const newOptionsNoCheck = (prevOptions, nextOptions, diff)=> {
 	return (dispatch)=> {
-		dispatch(createAction(NEW_OPTIONS)(obj));
+		dispatch(createAction(NEW_OPTIONS)(nextOptions.toJS()));
 
 		if(diff && diff.length == 1) {
 			const [{kind, lhs, rhs, path}] = diff;
@@ -41,6 +42,9 @@ export const newOptionsNoCheck = (obj, diff)=> {
 			}
 		}
 
+		// if(!prevOptions || !Immutable.is(prevOptions.get('size'), nextOptions.get('size'))) {
+		// 	dispatch(init())
+		// }
 		dispatch(init())
 	}
 };

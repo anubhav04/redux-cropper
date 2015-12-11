@@ -82,6 +82,13 @@ export const getBlob = (cb) =>
 		const {options:_options, image, canvas, cropBox} = getState();
 		const options = _options.get('options');
 
+		console.log({
+			options: options.toJS(), 
+			image: image.toJS(), 
+			canvas: canvas.toJS(), 
+			cropBox: cropBox.toJS()
+		})
+
 		getOffscreenCroppedImagePromise({
 			options,
 			cropData:{

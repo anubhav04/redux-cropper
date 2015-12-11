@@ -1,6 +1,7 @@
 import { createAction } from 'redux-actions';
 import { pointFromSize, pointFromOffset, pointFct } from '../records/point';
 import { INIT_CONTAINER, INIT_CANVAS, INIT_CROP_BOX } from '../constants/init';
+import { onLoadUrlPromise } from '../imageUtils';
 
 export const initImage = ({naturalSize, size}) =>
 	(dispatch, getState)=> {
@@ -43,19 +44,29 @@ export const initCropBox = () =>
 
 export const init = () =>
 	(dispatch, getState)=> {
-		const {options, myState} = getState();
+		const {options:_options, myState} = getState();
 		//if(myState.get('isInited')){
 		//	return;
 		//}
-		const size = pointFromSize(options.get('options').get('size'));
 
-		dispatch(initImage({naturalSize: pointFromSize({
-			width: 1280,
-			height: 720
-		}), size}));
-		dispatch(initContainer(size));
-		dispatch(initCanvas());
-		dispatch(initCropBox());
+		const options = _options.get('options');
+		let _size = options.get('size');
+		const size = pointFromSize(_size ? _size : {width:1, height:1});
+		let url = options.get('url');
 
-		dispatch(createAction('NEW_MY_STATE')({isInited: true}));
+		const initProc = (naturalSize, size)=>{
+			dispatch(initImage({naturalSize, size}));
+			dispatch(initContainer(size));
+			dispatch(initCanvas());
+			dispatch(initCropBox());
+
+			dispatch(createAction('NEW_MY_STATE')({isInited: true}));
+		}
+
+		initProc(size, size)
+
+		onLoadUrlPromise({url})
+		.then(({size: naturalSize})=>{
+			initProc(pointFromSize(naturalSize), size)
+		})
 	};
