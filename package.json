@@ -46,7 +46,6 @@
     "immutable": "3.7.5",
     "pretty-error": "1.1.2",
     "ramda": "0.17.1",
-    "react-bootstrap": "0.25.2",
     "react-css-modules": "^3.6.1",
     "react-pure-render": "1.0.2",
     "react-redux": "2.1.2",

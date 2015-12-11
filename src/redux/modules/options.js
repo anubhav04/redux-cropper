@@ -39,6 +39,13 @@ export const newOptionsNoCheck = (obj, diff)=> {
 				dispatch(rotate(rhs));
 				return;
 			}
+
+			if(kind === 'E' && path[0] === "rotate") {
+				dispatch(rotate(rhs));
+				return;
+			}
+
+			init
 		}
 
 		dispatch(init())
