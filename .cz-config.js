@@ -19,6 +19,7 @@ module.exports = {
     {name: 'package.json'},
     {name: 'api'},
     {name: 'ConnectedAll'},
+    {name: 'options'},
     {name: 'imageUtils'},
     {name: 'getCroppedImagePromise'},
     {name: 'other'}
