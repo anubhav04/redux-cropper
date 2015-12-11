@@ -131,26 +131,17 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize, sc
 
 export const getSourceCanvasPure = ({ image }) => {
 	let canvasSize  = image.get('naturalSize')
-	const rotate = image.get('rotate');
+	const rotate = image.get('rotate') || 0;
 	const scale = image.get('scale');
 
-	const scalable = scale.get('x') &&
-		scale.get('y') &&
-		(scale.get('x') !== 1 || scale.get('y') !== 1);
-
-	const rotatable = rotate && rotate !== 0;
-	const advanced = rotatable || scalable;  
-
-	let translate = scalable ? canvasSize.divideScalar(2) : null;
-	 
 	const rotated = getRotatedSizes({
-			sizePoint: canvasSize,
-			degree: rotate,
-			aspectRatio: image.get('aspectRatio')
-		});
+		sizePoint: canvasSize,
+		degree: rotate,
+		aspectRatio: image.get('aspectRatio')
+	});
 
 	canvasSize = rotated;
-	translate = rotated.divideScalar(2);
+	const translate = rotated.divideScalar(2);
 	
 	const offset = true ? image.get('naturalSize').negate().divideScalar(2) : zero;
 	
