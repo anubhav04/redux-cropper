@@ -19,6 +19,7 @@ module.exports = {
     {name: 'package.json'},
     {name: 'index.js'},
     {name: 'ConnectedAll'},
+    {name: 'imageUtils'},
     {name: 'other'}
   ]
 };
