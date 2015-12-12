@@ -5,9 +5,7 @@ import { onLoadUrlPromise } from './index'
 
 export default (obj)=>
 	onLoadUrlPromise({url:obj.options.get('url')})
-	.then(
-		({src})=> getBlobFromSrc({obj, src, type: "image/png", quality: 1})
-	)
+	.then(({src})=> getBlobFromSrc({obj, src, type: "image/png", quality: 1}))
 
 export const getBlobFromSrc = ({obj, src, type, quality})=>{
 	const options = obj.options;
@@ -68,7 +66,7 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize})=>
 	if (srcPoint.get('x') <= 0) {
 		dstPoint = dstPoint.set('x', -srcPoint.get('x'));
 		srcPoint = srcPoint.set('x', 0);
-		const _width = Math.min(sourceSize.get('x'), originalSize.get('x') + srcPoint.get('x'));
+		const _width = Math.min(sourceSize.get('x'), sourceSize.get('x') + srcPoint.get('x'));
 
 		srcSize = srcSize.set('x', _width);
 		dstSize = dstSize.set('x', _width);
@@ -89,7 +87,7 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize})=>
 		dstPoint = dstPoint.set('y', -srcPoint.get('y'));
 		srcPoint = srcPoint.set('y', 0);
 
-		const _width = Math.min(sourceSize.get('y'), originalSize.get('y') + srcPoint.get('y'));
+		const _width = Math.min(sourceSize.get('y'), sourceSize.get('y') + srcPoint.get('y'));
 
 		srcSize = srcSize.set('y', _width);
 		dstSize = dstSize.set('y', _width);
@@ -119,6 +117,8 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize})=>
 			Math.floor(dstSize.get('y'))
 		]
 	}
+
+	console.log(args)
 	return args;
 }
 
@@ -175,6 +175,8 @@ export const getSourceCanvas = ({ imageElem, image, canvasData }) => {
 	}
 
     context.restore();
+
+    console.log(canvas.toDataURL('png', 1))
     
 	return canvas;
 };
@@ -185,9 +187,23 @@ export const getData = ({ options, cropData:{image, canvas, cropBox}, isRounded 
 		size: cropBox.get('size')
 	});
 
+	const rotatedNaturalSize = getRotatedSizes({
+		sizePoint: image.get('naturalSize'),
+		degree: image.get('rotate'),
+		aspectRatio: image.get('naturalSize').getAspectRatio()
+	});
+
+	const rotatedSize = getRotatedSizes({
+		sizePoint: image.get('size'),
+		degree: image.get('rotate'),
+		aspectRatio: image.get('size').getAspectRatio()
+	});
+
+    console.log({image:image.toJS(), canvas:canvas.toJS(), cropBox:cropBox.toJS()})
+
 	const ratioPoint = pointFct({
-		x: image.getIn(['naturalSize', 'x']) / image.getIn(['size', 'x']),
-		y: image.getIn(['naturalSize', 'y']) / image.getIn(['size', 'y'])
+		x: rotatedNaturalSize.getIn(['x']) / rotatedSize.getIn(['x']),
+		y: rotatedNaturalSize.getIn(['y']) / rotatedSize.getIn(['y'])
 	})
 
 	const onRatio = (point)=> {
@@ -198,16 +214,10 @@ export const getData = ({ options, cropData:{image, canvas, cropBox}, isRounded 
 	data = data
 	.update('offset', onRatio)
 	.update('size', onRatio);
-
-	// data = data.setIn(['x'], 153.60000000000002)
-
-	if (options.get('rotatable')) {
-		data = data.set('rotate', image.get('rotate') || 0)
-	}
-
-	if (options.get('scalable')) {
-		data = data.set('scale', image.get('scale') || one)
-	}
-
+	
+	data = data
+		.set('rotate', image.get('rotate') || 0)
+		.set('scale', image.get('scale') || one)
+	
 	return data;
 };
