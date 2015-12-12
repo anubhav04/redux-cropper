@@ -3,23 +3,31 @@ import React, { Component } from 'react';
 import create from '../redux/create';
 import ConnectedAll from './ConnectedAll';
 
-export default (options)=>{
-	const store = create(options);
+export default class Cropper extends Component {
+	constructor(props, context) {
+		super(props, context);
+		this.state = {};
+	}
 
-	class Cropper extends Component {
-		componentDidMount(){
-			if(this.props.onRedux) {
-				this.props.onRedux(store)
-			}
-		}
+	componentDidMount() {
+		const reduxOptions = this.props.reduxOptions ? this.props.reduxOptions : {};
+		const store = create(reduxOptions);
 
-		render() {
-			return (
-				<ConnectedAll options={this.props} store={store}/>
-			);
+		this.setState({store})
+
+		if(this.props.onRedux) {
+			this.props.onRedux(store)
 		}
 	}
-	return Cropper;
+
+	render() {
+		if(!this.state.store){
+			return null;
+		}
+		return (
+			<ConnectedAll options={this.props.options} store={this.state.store}/>
+		);
+	}
 }
 
 //<DebugPanel top right bottom>

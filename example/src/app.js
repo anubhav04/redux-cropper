@@ -3,10 +3,8 @@ import PureComponent from 'react-pure-render/component';
 
 const imgPath = require("../img/watson.jpg");
 
-import { getBlob, CropperFct, CropperPreview, imageUtils } from 'redux-cropper';
+import { getBlob, Cropper, CropperPreview, imageUtils } from 'redux-cropper';
 const { getBlobFromUrl } = imageUtils;
-
-const Cropper = CropperFct({isDebug: true});
 
 const options = {
 	viewMode: 1,
@@ -51,6 +49,8 @@ export default class App extends PureComponent {
 	}
 
 	render() {
+		const {rotate} = this.state;
+
 		return (
 			<div>
 				<div style={{width:800, height:30}}>
@@ -79,12 +79,18 @@ export default class App extends PureComponent {
 				<br/>
 				<br/>
 				<div style={{display:'inline-block'}}>
-					<Cropper {...options}
-						rotate={this.state.rotate}
+					<Cropper
+						options={{...options, rotate}}
+						reduxOptions={{isDebug:true}}
 						onRedux={(cropperRedux)=>{
 							this.setState({cropperRedux});
 							cropperRedux.subscribe(this.onCropperReduxUpdate)
 						}}/>
+
+					<Cropper
+						options={{...options, rotate}}
+						rotate={this.state.rotate}
+					/>
 				</div>
 				{this.state.blob ? (
 					<div style={{display:'inline-block'}}>
@@ -113,7 +119,6 @@ export default class App extends PureComponent {
 				<br/>
 				cropbox : {this.state.cropBox ? JSON.stringify(this.state.cropBox) : null}
 				<br/>
-
 			</div>
 		);
 	}

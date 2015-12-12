@@ -19,7 +19,6 @@ const rotateCanvas = () =>
 
 export const rotate = (degree) =>
 	(dispatch, getState)=> {
-		console.log(degree)
 		dispatch(createAction('SET_ROTATE')(degree))
 		dispatch(rotateCanvas())
 		dispatch(rotateImage())
