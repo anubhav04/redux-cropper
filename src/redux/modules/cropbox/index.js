@@ -17,9 +17,7 @@ import limit from '../../../selectors/CropBox/limit';
 import { limitRecordPoint } from '../../../records/utils';
 import { pointFromSize, pointFromOffset } from '../../../records/point';
 
-export const init = (state, {payload:{options:_options, canvas, cropBox, container}}) => {
-	const options = _options.get('options');
-
+export const init = (state, {payload:{options, canvas, cropBox, container}}) => {
 	const aspectRatio = options.get('aspectRatio');
 	const autoCropArea = Number(options.get('autoCropArea')) || 0.8;
 

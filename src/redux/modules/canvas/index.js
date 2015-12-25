@@ -111,7 +111,7 @@ export const init = (state, {payload:{options, image, cropBox, container}})=> {
 		.set('oldOffset', newOldTopLeft)
 		.set('offset', newOldTopLeft);
 
-	const newOptions = options.get('options')
+	const newOptions = options
 		.set('isPositionLimited', true)
 		.set('isSizeLimited', true)
 		.set('isLimited', (viewMode === 1 || viewMode === 2));
@@ -195,7 +195,7 @@ export default handleActions({
 			
 			newCanvas = limitRecordSize(newCanvas);
 
-			const newOptions = options.get('options')
+			const newOptions = options
 				.set('isPositionLimited', true)
 				.set('isSizeLimited', false);
 

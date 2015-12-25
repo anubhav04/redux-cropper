@@ -45,7 +45,7 @@ export const wheel = R.compose(enabledAC)
 ((event) =>
 	(dispatch, getState) => {
 		const {options} = getState();
-		const {options:{wheelZoomRatio}} = options.toJS();
+		const {wheelZoomRatio} = options.toJS();
 
 		const originalEvent = event.originalEvent;
 		const e = originalEvent || event;
@@ -79,19 +79,11 @@ export const zoom = (ratio) =>
 
 export const getBlob = (cb) =>
 	(dispatch, getState)=> {
-		const {options:_options, image, canvas, cropBox} = getState();
-		const options = _options.get('options');
-
-		console.log({
-			options: options.toJS(), 
-			image: image.toJS(), 
-			canvas: canvas.toJS(), 
-			cropBox: cropBox.toJS()
-		})
+		const {options, image, canvas, cropBox} = getState();
 
 		getOffscreenCroppedImagePromise({
 			options,
-			cropData:{
+			cropData: {
 				image, canvas, cropBox
 			},
 			isRounded:false

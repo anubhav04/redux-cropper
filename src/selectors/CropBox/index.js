@@ -13,7 +13,7 @@ const render = (options, cropBox, container, canvas) => {
 	newCropBox = limitRecordOffset(newCropBox);
 	newCropBox = limitRecordSize(newCropBox);
 
-	const newOptions = options.get('options')
+	const newOptions = options
 		.set('isPositionLimited', true)
 		.set('isSizeLimited', false);
 

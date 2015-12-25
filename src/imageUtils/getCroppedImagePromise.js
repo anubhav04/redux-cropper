@@ -118,7 +118,6 @@ export const getDrawImageParamsParams = ({srcPoint, originalSize, sourceSize})=>
 		]
 	}
 
-	console.log(args)
 	return args;
 }
 
@@ -175,8 +174,6 @@ export const getSourceCanvas = ({ imageElem, image, canvasData }) => {
 	}
 
     context.restore();
-
-    console.log(canvas.toDataURL('png', 1))
     
 	return canvas;
 };
@@ -198,8 +195,6 @@ export const getData = ({ options, cropData:{image, canvas, cropBox}, isRounded 
 		degree: image.get('rotate'),
 		aspectRatio: image.get('size').getAspectRatio()
 	});
-
-    console.log({image:image.toJS(), canvas:canvas.toJS(), cropBox:cropBox.toJS()})
 
 	const ratioPoint = pointFct({
 		x: rotatedNaturalSize.getIn(['x']) / rotatedSize.getIn(['x']),

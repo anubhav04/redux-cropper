@@ -43,6 +43,7 @@
     "react": "^0.13.3"
   },
   "dependencies": {
+    "deep-diff": "^0.3.3",
     "immutable": "3.7.5",
     "pretty-error": "1.1.2",
     "ramda": "0.17.1",
@@ -51,13 +52,13 @@
     "react-redux": "2.1.2",
     "redux": "3.0.4",
     "redux-actions": "0.8.0",
+    "redux-as-component": "^1.0.0",
     "redux-batched-updates": "^0.1.0",
     "redux-ignore": "^1.2.1",
     "redux-logger": "2.0.4",
     "redux-promise": "0.5.0",
     "redux-thunk": "0.1.0",
-    "reselect": "2.0.0",
-    "deep-diff": "^0.3.3"
+    "reselect": "2.0.0"
   },
   "devDependencies": {
     "autoprefixer-loader": "^3.1.0",

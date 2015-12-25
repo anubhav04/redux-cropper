@@ -4,7 +4,6 @@ import Immutable from 'immutable';
 import { bindActionCreators } from 'redux';
 import { createStructuredSelector } from 'reselect'
 import { CanvasSelector, CropBoxSelector, ImageSelector, optionsSelector, containerSelector} from '../selectors';
-import { newOptions } from '../redux/modules/options';
 import * as actionDirections from '../redux/modules/cropbox/direction';
 import * as dragboxActions from '../redux/modules/dragbox';
 import * as moveCoordsActions from '../redux/modules/moveCoords/actions';
@@ -17,29 +16,17 @@ const allSelector = createStructuredSelector({
 	canvasData: (state)=>state.canvas,
 	containerData: (state)=>state.container,
 	cropBoxData: (state)=>state.cropBox,
+	myState: (state)=>state.myState,
 	imageData: (state)=>state.image,
-	_options: optionsSelector
+	options: optionsSelector
 });
 
 class ConnectedAll extends Component {
-	componentDidMount() {
-		this.componentWillReceiveProps(this.props)
-	}
-
-	componentWillReceiveProps(nextProps) {
-		const { newOptions, options } = nextProps;
-		if(options.disableOptions){
-			return;
-		}
-	
-		newOptions(options);
-	}
-
 	render() {
 		const {
 			canvasData,
 			containerData,
-			_options,
+			options,
 			cropBoxData,
 			imageData,
 			actionEast,
@@ -53,7 +40,8 @@ class ConnectedAll extends Component {
 			wheel,
 			cropStart,
 			cropMove,
-			cropEnd
+			cropEnd,
+			myState
 		} = this.props;
 
 		const actionDirections = {
@@ -77,11 +65,11 @@ class ConnectedAll extends Component {
 			cropEnd
 		};
 
-		if(!_options.get('lastPassedOptions')){
+		if(!options || !myState.get('isInited')){
 			return <div/>;
 		}
 
-		const {guides, center, cropBoxResizable, url} = _options.get('options').toJS();
+		const {guides, center, cropBoxResizable, url} = options.toJS();
 
 		const container = Immutable.fromJS({
 			wrapBox: {
@@ -106,27 +94,11 @@ class ConnectedAll extends Component {
 			container: containerData
 		});
 
-		// console.log('canvas:')
-		// console.log(canvas.toJS())
-		// console.log('=>canvas')
-
-		// console.log('cropBox:')
-		// console.log(cropBox)
-		// console.log('=>cropBox')
-
-		// console.log('image:')
-		// console.log(image)
-		// console.log('=>image')
-
-		if(!_options.get('lastPassedOptions')){
-			return <div/>;
-		}
-
 		return (
 				<ImageContainer
 					handlers={handlers}
 					cropperActions={cropperActions}
-					options={_options.toJS()}
+					options={options.toJS()}
 					style={{}}
 					container={container}
 					actionDirections={actionDirections}/>
@@ -138,7 +110,6 @@ export default connect(
 	allSelector,
 	{
 		...actionDirections,
-		newOptions,
 		...handlers,
 		...moveCoordsActions,
 		...dragboxActions

@@ -8,9 +8,9 @@ const rotateImage = () =>
 
 const rotateCanvas = () =>
 	(dispatch, getState)=> {
-		const {options:_options, container, cropBox, image} = getState();
+		const {options, container, cropBox, image} = getState();
 		dispatch(createAction('ROTATE_CANVAS')({
-			options:_options.get('options'), 
+			options, 
 			container, 
 			cropBox, 
 			image

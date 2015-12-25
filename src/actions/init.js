@@ -5,8 +5,7 @@ import { onLoadUrlPromise } from '../imageUtils';
 
 export const initImage = ({naturalSize, size}) =>
 	(dispatch, getState)=> {
-		const {options:_options} = getState();
-		const options = _options.get('options');
+		const {options} = getState();
 
 		dispatch(createAction('SET_STATE_IMAGE')({
 			aspectRatio: options.get('aspectRatio'),
@@ -44,13 +43,12 @@ export const initCropBox = () =>
 
 export const init = () =>
 	(dispatch, getState)=> {
-		const {options:_options, myState} = getState();
+		const {options, myState} = getState();
 		//if(myState.get('isInited')){
 		//	return;
 		//}
 
-		const options = _options.get('options');
-		let _size = options.get('size');
+		let _size = options.get('size') ? options.get('size').toJS() : null;
 		const size = pointFromSize(_size ? _size : {width:1, height:1});
 		let url = options.get('url');
 

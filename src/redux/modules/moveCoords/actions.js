@@ -73,7 +73,7 @@ export const cropEnd = R.compose(enabledAC, movingAC)((event)=> createAction(CRO
 const change = R.compose(enabledAC, movingAC)(()=>
 	(dispatch, getState) => {
 		const {moveCoords, options} = getState();
-		const aspectRatio = options.get('options').get('aspectRatio');
+		const aspectRatio = options.get('aspectRatio');
 		const action = moveCoords.get('action');
 
 		const range = moveCoords.get('end')
