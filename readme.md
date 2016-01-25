@@ -13,6 +13,8 @@ Under development, please report an issue if you run into some bug
 
 api should be as close as possible to [this](https://github.com/fengyuanchen/cropper/blob/master/README.md)
 
+to transform redux app to plain react component I use [redux-as-component](https://github.com/lapanoid/redux-as-component)
+
 #Usage
 
 ```
